@@ -1,0 +1,1 @@
+export { resourceObjects } from './resourceObjects';

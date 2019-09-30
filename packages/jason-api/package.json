@@ -1,0 +1,42 @@
+{
+  "name": "jason-api",
+  "version": "1.0.0-alpha.0",
+  "license": "MIT",
+  "description": "Consume and manipulate JSON API standard data in Redux with scary ease.",
+  "repository": "https://github.com/rmarganti/jason-api",
+  "main": "dist/index.js",
+  "module": "dist/jason-api.esm.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test --env=jsdom",
+    "lint": "tsdx lint",
+    "prepublish": "yarn build"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint src && yarn test"
+    }
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "^__mocks__(/?.*)": "<rootDir>/__mocks__/$1",
+      "^__tests__(/?.*)": "<rootDir>/__tests__/$1"
+    }
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "pluralize": "^7.0.0",
+    "ramda": "^0.26.1",
+    "ts-json-api": "1.0.0-alpha.1"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-redux": ">=7.1.0",
+    "redux": ">=4.0.0"
+  }
+}

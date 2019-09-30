@@ -1,0 +1,13 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        ".rts2_cache_cjs": true,
+        ".rts2_cache_esm": true,
+        ".rts2_cache_umd": true,
+        "example/.cache": true
+    }
+}
