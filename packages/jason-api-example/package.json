@@ -1,0 +1,20 @@
+{
+  "name": "jason-api-example",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "parcel index.html",
+    "build": "parcel build index.html"
+  },
+  "dependencies": {
+    "axios": ">= 0.9.0",
+    "axios-mock-adapter": "^1.17.0",
+    "react-app-polyfill": "^1.0.0",
+    "styled-components": "^4.3.2"
+  },
+  "alias": {
+    "react-dom": "../../node_modules/react-dom/profiling",
+    "scheduler/tracing": "../../node_modules/scheduler/tracing-profiling"
+  }
+}
