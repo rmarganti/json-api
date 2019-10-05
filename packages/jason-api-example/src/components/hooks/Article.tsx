@@ -3,7 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 
 // JasonAPI
-import { useAutoRequest } from '../../../../src';
+import { useAutoRequest } from 'jason-api';
 
 // Internal Dependencies
 import { getArticle } from '../../actions';

@@ -12,15 +12,11 @@ import {
     propEq,
     propOr,
     reject,
-    set
+    set,
 } from 'ramda';
 
 import { Attributes, NewResourceObject, Relationships } from '../types';
-import {
-    convertToApiResourceObjectOrObjects,
-    isDefined,
-    mergeReverse
-} from '../utils';
+import { isDefined, mergeReverse } from '../utils';
 
 export class ApiResourceObject<
     D extends NewResourceObject = NewResourceObject
@@ -33,13 +29,23 @@ export class ApiResourceObject<
     }
 
     /**
-     * Static helper to build a new ApiResourceObject
+     * Static helper to build a new ApiResourceObject.
      *
      * @param resourceObject
      */
     static of<S extends NewResourceObject = NewResourceObject>(
         resourceObject: S
-    ) {
+    ): ApiResourceObject<S>;
+    static of<S extends NewResourceObject = NewResourceObject>(
+        resourceObject: S[]
+    ): ApiResourceObject<S>[];
+    static of<S extends NewResourceObject = NewResourceObject>(
+        resourceObject: S | S[]
+    ): ApiResourceObject<S> | ApiResourceObject<S>[] {
+        if (Array.isArray(resourceObject)) {
+            return resourceObject.map(r => new ApiResourceObject(r));
+        }
+
         return new ApiResourceObject(resourceObject);
     }
 
@@ -65,7 +71,7 @@ export class ApiResourceObject<
         return new ApiResourceObject({
             type,
             id,
-            attributes
+            attributes,
         });
     }
 
@@ -112,7 +118,7 @@ export class ApiResourceObject<
         return Object.keys(relationships).reduce(
             (carrier: object, name: string) => ({
                 ...carrier,
-                [name]: this.relationship(name)
+                [name]: this.relationship(name),
             }),
             {}
         );
@@ -126,11 +132,7 @@ export class ApiResourceObject<
     relationship(name: string) {
         return pipe(
             path(['relationships', name, 'data']),
-            ifElse(
-                isDefined,
-                convertToApiResourceObjectOrObjects,
-                () => undefined
-            )
+            ifElse(isDefined, ApiResourceObject.of, () => undefined)
         )(this.data);
     }
 
@@ -170,7 +172,7 @@ export class ApiResourceObject<
                 id:
                     typeOrResourceObject instanceof ApiResourceObject
                         ? typeOrResourceObject.id()
-                        : id
+                        : id,
             })
         );
 
@@ -216,7 +218,7 @@ export class ApiResourceObject<
                 id:
                     typeOrResourceObject instanceof ApiResourceObject
                         ? typeOrResourceObject.id()
-                        : id
+                        : id,
             }
         );
 

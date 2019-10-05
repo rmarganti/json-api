@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { ResourceIdentifier, Response } from 'ts-json-api';
 
 // JasonAPI
-import { JasonApiDispatch } from '../../../../../src';
+import { JasonApiDispatch } from 'jason-api';
 
 // Internal Dependencies
 import { addComment } from '../../../actions';

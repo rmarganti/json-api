@@ -10,7 +10,7 @@ import {
 import {
     middleware as jasonApiMiddleware,
     reducer as jasonApi,
-} from '../../src';
+} from 'jason-api';
 
 // Setup the store
 const rootReducer = combineReducers({ jasonApi });

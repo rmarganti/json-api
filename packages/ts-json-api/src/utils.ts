@@ -1,25 +1,4 @@
-import { flip, ifElse, map, merge, propEq } from 'ramda';
-
-import { ApiResourceObject } from './classes/ApiResourceObject';
-import { ResourceObject } from './types';
-
-/**
- * Converts a Resource Object to an ResourceObject
- *
- * @param resourceObject
- */
-export const convertToApiResourceObject = (resourceObject: ResourceObject) =>
-    new ApiResourceObject(resourceObject);
-
-/**
- * If an Array is provided, it is converted to an Array of ApiResourceObjects.
- * If a single item is provided, it is converted to an ApiResourceObject
- */
-export const convertToApiResourceObjectOrObjects = ifElse(
-    Array.isArray,
-    map(convertToApiResourceObject),
-    convertToApiResourceObject
-);
+import { flip, merge, propEq } from 'ramda';
 
 /**
  * A predicate that determines if the provided value is defined

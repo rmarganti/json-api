@@ -7,12 +7,14 @@ import { mockArticleResponse } from '../__mocks__/mockArticleResponse';
 import { mockCommentResponse } from '../__mocks__/mockCommentResponse';
 
 export const mockAxios = () => {
+    console.log('mauking.');
     // Mock the Axios (used under the hood) response
     const mock = new MockAdapter(axios, {
         delayResponse: 1000,
     });
 
     // Articles
+    mock.onGet().reply(mockArticleResponse);
     mock.onGet('/articles/1').reply(mockArticleResponse);
     mock.onPost('/articles').reply(mockArticleResponse);
 

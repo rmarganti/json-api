@@ -3,7 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 
 // JasonAPI
-import { useItem } from '../../../../src';
+import { useItem } from 'jason-api';
 
 // Internal Dependencies
 import { PersonResource } from '../../types';

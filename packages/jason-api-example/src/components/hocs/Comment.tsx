@@ -3,7 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 
 // JasonAPI
-import { withItem, WithItemInjectedProps } from '../../../../src';
+import { withItem, WithItemInjectedProps } from 'jason-api';
 
 // Internal Dependencies
 import { CommentResource } from '../../types';

@@ -1,7 +1,6 @@
 import { clone, path, prop } from 'ramda';
 
 import { Error, Response, ResponseWithMetaData } from '../types';
-import { convertToApiResourceObjectOrObjects } from '../utils';
 import { ApiError } from './ApiError';
 import { ApiResourceObject } from './ApiResourceObject';
 
@@ -26,7 +25,15 @@ export class ApiResponse<D extends Response = Response> {
      * as an ApiResourceObject or array of ApiResourceObjects
      */
     data() {
-        return convertToApiResourceObjectOrObjects(this.response.data);
+        if (!this.response.data) {
+            return undefined;
+        }
+
+        if (Array.isArray(this.response.data)) {
+            return this.response.data.map(d => ApiResourceObject.of(d));
+        }
+
+        return ApiResourceObject.of(this.response.data);
     }
 
     /**
@@ -48,9 +55,11 @@ export class ApiResponse<D extends Response = Response> {
      * Retrieves all includes an array of ApiResourceObjects
      */
     included(): ApiResourceObject[] {
-        return convertToApiResourceObjectOrObjects(
-            this.response.included || []
-        );
+        if (!this.response.included) {
+            return [];
+        }
+
+        return ApiResourceObject.of(this.response.included);
     }
 
     /**

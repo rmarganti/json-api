@@ -1,5 +1,5 @@
 // JasonAPI
-import { jasonApiRequest } from '../../src';
+import { jasonApiRequest } from 'jason-api';
 import { ArticleResource, CommentResource } from './types';
 
 // These create a JasonAPI meta action. They will trigger

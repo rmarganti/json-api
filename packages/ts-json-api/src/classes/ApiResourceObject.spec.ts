@@ -24,16 +24,16 @@ describe('ApiResourceObject', () => {
     it("updated an ApiResourceObject's attributes immutably", () => {
         const result = rO.update({
             title: 'New title',
-            deleted: true
+            deleted: true,
         });
 
         expect(rO.attributes()).toEqual({
-            title: 'JSON API paints my bikeshed!'
+            title: 'JSON API paints my bikeshed!',
         });
 
         expect(result.attributes()).toEqual({
             title: 'New title',
-            deleted: true
+            deleted: true,
         });
     });
 
@@ -93,7 +93,7 @@ describe('ApiResourceObject', () => {
         expect(result.relationship('editor').id()).toEqual('8675309');
         expect(result.relationship('editor').type()).toEqual('people');
 
-        expect(rO.relationship('editor')).toBeUndefined;
+        expect(rO.relationship('editor')).toBeUndefined();
     });
 
     it('sets a relationship to another ApiResourceObject immutably', () => {
@@ -111,30 +111,27 @@ describe('ApiResourceObject', () => {
         expect(result.relationship('editor').id()).toEqual('4242');
         expect(result.relationship('editor').type()).toEqual('people');
 
-        expect(rO.relationship('editor')).toBeUndefined;
+        expect(rO.relationship('editor')).toBeUndefined();
     });
 
     it('can build a new ApiResourceObject', () => {
         const result = ApiResourceObject.build('emcee', {
             name: 'SoulSauce',
-            status: 'GOAT'
+            status: 'GOAT',
         });
 
         expect(result.type()).toEqual('emcee');
         expect(result.id()).toBeUndefined();
         expect(result.attributes()).toEqual({
             name: 'SoulSauce',
-            status: 'GOAT'
+            status: 'GOAT',
         });
     });
 
     it('returns the ApiResourceObject without the relationships', () => {
         const result = rO.withoutRelationships();
 
-        expect(result.id()).toBeDefined;
-        expect(result.type()).toBeDefined;
-        expect(result.attributes()).toBeDefined;
-        expect(result.relationships()).toBeUndefined;
+        expect(result.relationships()).toEqual({});
     });
 
     it('can return a serializable object', () => {
@@ -143,14 +140,14 @@ describe('ApiResourceObject', () => {
             'id',
             'links',
             'relationships',
-            'type'
+            'type',
         ]);
 
         expect(Object.keys(rO.withoutRelationships().toJSON()).sort()).toEqual([
             'attributes',
             'id',
             'links',
-            'type'
+            'type',
         ]);
     });
 
@@ -162,5 +159,29 @@ describe('ApiResourceObject', () => {
 
         const result = rO.map(changeTitleToBeesKnees);
         expect(result.attribute('title')).toEqual('BeesKnees');
+    });
+
+    it('can be built statically', () => {
+        const single = ApiResourceObject.of({
+            type: 'articles',
+            id: '1',
+        });
+
+        expect(single).toBeInstanceOf(ApiResourceObject);
+
+        const collection = ApiResourceObject.of([
+            {
+                type: 'articles',
+                id: '1',
+            },
+            {
+                type: 'articles',
+                id: '1',
+            },
+        ]);
+
+        expect(collection).toHaveLength(2);
+        expect(collection[0]).toBeInstanceOf(ApiResourceObject);
+        expect(collection[1]).toBeInstanceOf(ApiResourceObject);
     });
 });

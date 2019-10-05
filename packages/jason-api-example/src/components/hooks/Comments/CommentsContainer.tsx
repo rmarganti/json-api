@@ -3,7 +3,7 @@ import * as React from 'react';
 import { ResourceIdentifier, Response } from 'ts-json-api';
 
 // JasonAPI
-import { useRequest } from '../../../../../src';
+import { useRequest } from 'jason-api';
 
 // Internal Dependencies
 import { addComment } from '../../../actions';

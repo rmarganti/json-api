@@ -10,7 +10,7 @@ export interface ResponseWithData<
     data: D;
     included?: ResourceObject[];
     links?: Links;
-    errors?: [Error];
+    errors?: Error[];
     meta?: Meta;
 }
 
@@ -23,7 +23,7 @@ export interface ResponseWithErrors<
     data?: D;
     included?: ResourceObject[];
     links?: Links;
-    errors: [Error];
+    errors: Error[];
     meta?: Meta;
 }
 
@@ -36,7 +36,7 @@ export interface ResponseWithMetaData<
     data?: D;
     included?: ResourceObject[];
     links?: Links;
-    errors?: [Error];
+    errors?: Error[];
     meta: Meta;
 }
 
@@ -49,7 +49,7 @@ export interface Response<
     data?: D;
     included?: ResourceObject[];
     links?: Links;
-    errors?: [Error];
+    errors?: Error[];
     meta?: Meta;
 }
 
