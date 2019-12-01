@@ -1,0 +1,82 @@
+---
+name: JasonAPI
+route: /
+---
+
+![Logo](./imgs/header.png)
+
+# JasonAPI
+
+Consume and manipulate [JSON API standard](http://jsonapi.org/)
+data in Redux with scary ease.
+
+## A Basic (But Powerful) Example
+
+Below is a simple example. Hopefully, it should demonstrate how the individual
+pieces play together. With just a little bit of code, you get JSON API-compliant
+api calls, caching, loading status management, error-handling, and efficient
+React renders.
+
+```tsx
+import * as React from 'react';
+import { jasonApiRequest, useAutoRequest, useItem } from 'jason-api';
+import { ResourceObject } from 'ts-json-api';
+
+export interface ArticleResource extends ResourceObject {
+    type: 'articles';
+    attributes: {
+        title: string;
+        body: string;
+    };
+}
+
+const fetchArticles = () =>
+    jasonApiRequest<ArticleResource[]>({
+        url: '/api/articles',
+    });
+
+// This component will automatically initiate a
+// request to get a list of an Articles on mount.
+export const ArticlesList = () => {
+    const { data: articles = [], errors, isLoading } = useAutoRequest({
+        action: fetchArticles(),
+    });
+
+    if (isLoading) {
+        return <YourLoadingComponent />;
+    }
+
+    if (errors) {
+        return <YourErrorsComponent errors={errors} />;
+    }
+
+    return (
+        <div>
+            <h1>Articles</h1>
+            {articles.map(article => (
+                <Article id={article.id} />
+            ))}
+        </div>
+    );
+};
+
+interface ArticleProps {
+    id: string;
+}
+
+// This component will grab available Article data from the reduce store.
+const Article: React.FunctionComponent<ArticleProps> = ({ id }) => {
+    const article = useItem<ArticleResource>('articles', id);
+
+    if (!article) {
+        return null;
+    }
+
+    return (
+        <div>
+            <h2>{article.attributes.title}</h2>
+            <p>{article.attributes.body}</p>
+        </div>
+    );
+};
+```

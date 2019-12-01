@@ -2,11 +2,12 @@
 import { Action, AnyAction } from 'redux';
 
 // Testing dependencies
-import { ArticleResource } from '__mocks__';
+import { ArticleResource, PeopleResource } from '__mocks__';
 
 // Internal dependencies
 import { JasonApiDispatch, JasonApiState } from '../../types';
 import { jasonApiRequest } from './jasonApiRequest';
+import { Response } from 'ts-json-api';
 
 describe('jasonApiRequest()', () => {
     it('accepts extended State and Dispatch', () => {
@@ -36,6 +37,27 @@ describe('jasonApiRequest()', () => {
             url: '/articles',
             onSuccess: (response, { dispatch, getState }) => {
                 console.log(response, dispatch, getState);
+            },
+        });
+    });
+
+    it('accepts a transformer', () => {
+        // We expect the final shape to be a Response<PeopleResource>...
+        jasonApiRequest<PeopleResource>({
+            url: '/articles',
+            // ...but we expect the API response to be a Response<ArticleResource>.
+            transformer: (response: Response<ArticleResource>) => {
+                return {
+                    data: {
+                        type: 'people',
+                        id: (response.data && response.data.id) || '4444',
+                        attributes: {
+                            firstName: 'Bob',
+                            lastName: 'Vila',
+                            twitter: '@bob',
+                        },
+                    },
+                };
             },
         });
     });

@@ -1,6 +1,5 @@
 import { hashObject } from './data';
 import { RequestConfig } from '../types/request';
-import { ResourceObjectOrObjects } from 'ts-json-api';
 
 export interface Action<T extends string> {
     type: T;
@@ -29,6 +28,6 @@ export function createAction<T extends string, P>(type: T, payload?: P) {
 /**
  * Generate a deterministic cache key for a Request Action.
  */
-export const cacheKeyForRequestAction = <Data extends ResourceObjectOrObjects>(
+export const cacheKeyForRequestAction = <Data = any>(
     requestActionPayload: RequestConfig<Data>
 ) => requestActionPayload.cacheKey || hashObject(requestActionPayload);

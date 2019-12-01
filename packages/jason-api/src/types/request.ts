@@ -2,7 +2,6 @@
 import {
     Attributes,
     ResourceObjectOrObjects,
-    Response,
     ResponseWithData,
     ResponseWithErrors,
 } from 'ts-json-api';
@@ -27,18 +26,20 @@ interface ErrorCallback<
 }
 
 interface SuccessCallback<
-    Data extends ResourceObjectOrObjects,
-    Dispatch extends JasonApiDispatch,
+    Data = any,
+    Dispatch extends JasonApiDispatch = JasonApiDispatch,
     State extends StateWithJasonApi = StateWithJasonApi
 > {
     (
-        response: Response<Data>,
+        response: ResponseShape<Data>,
         store: JasonApiMiddlewareApi<Dispatch, State>
     ): void;
 }
 
-interface Transformer {
-    (response: ResponseWithData): ResponseWithData;
+interface Transformer<DataOut = any> {
+    <ResponseIn extends any = ResponseShape<DataOut>>(
+        response: ResponseIn
+    ): ResponseShape<DataOut>;
 }
 
 type SetRelationshipOnSuccess = [string, string, string, FlexiblePayload];
@@ -52,7 +53,7 @@ type UpdateResourceObjectOnSuccess = [string, string, Attributes];
 type Method = 'get' | 'post' | 'patch' | 'delete';
 
 export interface RequestConfig<
-    Data extends ResourceObjectOrObjects = ResourceObjectOrObjects,
+    Data = any,
     Dispatch extends JasonApiDispatch = JasonApiDispatch,
     State extends StateWithJasonApi = StateWithJasonApi
 > {
@@ -66,7 +67,7 @@ export interface RequestConfig<
     displayNotificationOnError?: boolean;
     onError?: ErrorCallback<Dispatch, State>;
     onSuccess?: SuccessCallback<Data, Dispatch, State>;
-    transformer?: Transformer;
+    transformer?: Transformer<Data>;
     setRelationshipOnSuccess?: SetRelationshipOnSuccess[];
     addRelationshipOnSuccess?: AddRelationshipOnSuccess[];
     removeRelationshipOnSuccess?: RemoveRelationshipOnSuccess[];
@@ -74,3 +75,13 @@ export interface RequestConfig<
     updateResourceObjectOnSuccess?: UpdateResourceObjectOnSuccess[];
     cacheKey?: string;
 }
+
+/**
+ * Response shape shorthand. If `T` is a Resource Object or Objects,
+ * then the shape of the Response is assumed to be a standard JSON API
+ * response, where the `data` properties is `T`. Otherwise, `T` is
+ * assumed to be the full shape of the response.
+ */
+export type ResponseShape<T = any> = T extends ResourceObjectOrObjects
+    ? ResponseWithData<T>
+    : T;

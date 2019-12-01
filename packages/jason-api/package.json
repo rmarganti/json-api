@@ -15,7 +15,9 @@
     "build": "tsdx build",
     "test": "tsdx test --env=jsdom",
     "lint": "tsdx lint",
-    "prepublish": "yarn build"
+    "prepublish": "yarn build",
+    "docs:dev": "docz dev",
+    "docs:build": "docz build"
   },
   "husky": {
     "hooks": {

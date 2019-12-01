@@ -1,5 +1,3 @@
-import { ResourceObjectOrObjects } from 'ts-json-api';
-
 import { JasonApiDispatch } from '../../types/redux';
 import { RequestConfig } from '../../types/request';
 import { StateWithJasonApi } from '../../types/state';
@@ -10,7 +8,7 @@ const defaultRequestConfig: Partial<RequestConfig> = {
 };
 
 export interface JasonApiRequestAction<
-    Data extends ResourceObjectOrObjects = ResourceObjectOrObjects,
+    Data = any,
     Dispatch extends JasonApiDispatch = JasonApiDispatch,
     State extends StateWithJasonApi = StateWithJasonApi
 > {
@@ -21,7 +19,7 @@ export interface JasonApiRequestAction<
  * Initialize a Request to be handled by the middleware.
  */
 export const jasonApiRequest = <
-    Data extends ResourceObjectOrObjects = ResourceObjectOrObjects,
+    Data = any,
     Dispatch extends JasonApiDispatch = JasonApiDispatch,
     State extends StateWithJasonApi = StateWithJasonApi
 >(

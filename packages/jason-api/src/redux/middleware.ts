@@ -99,8 +99,8 @@ class JsonApiMiddleware {
                 this.store.dispatch(this.config.stopLoadingActionCreator());
             }
 
-            this.finishLoading(transformedData);
-            this.executeOnSuccessActions(transformedData);
+            this.finishLoading(transformedData as ResponseWithData);
+            this.executeOnSuccessActions(transformedData as ResponseWithData);
 
             if (this.requestConfig.onSuccess) {
                 this.requestConfig.onSuccess(transformedData, this.store);

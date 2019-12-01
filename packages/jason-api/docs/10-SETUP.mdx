@@ -1,0 +1,35 @@
+# Hooking up the reducer and middleware
+ 
+    middleware as jasonApiMiddleware,
+## Basic setup
+
+```ts
+import {
+    middleware as jasonApiMiddleware,
+    reducer as jasonApi,
+} from 'jason-api';
+import { applyMiddleware, combineReducers, createStore } from 'redux';
+import * as yourReducers from './reducers';
+
+const store = createStore(
+    // It is necessary that JasonAPI's reducer is specifically named `jasonApi`.
+    combineReducers({ ...yourReducers, jasonApi }),
+    applyMiddleware(jasonApiMiddleware)
+);
+```
+
+### Customizing the middleware
+
+If you would like to customize the JasonAPI middleware, use the `middlewareFactory`. It accepts accepts action creators that will be triggered at the approriate times.
+
+```js
+import { middlewareFactory } from 'jason-api';
+
+const jasonApiMiddleware = middlewareFactory({
+    startLoadingActionCreator: () => ({ type: 'START_LOADING' }),
+    stopLoadingActionCreator: () => ({ type: 'STOP_LOADING' }),
+    displayErrorActionCreator: (errorMessage) => ({ type: 'START_LOADING', message: errorMessage }),
+    authenticationExpiredActionCreator: () => ({ type: 'AUTHENTICATION_EXPIRED' }),
+});
+
+```

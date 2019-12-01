@@ -39,43 +39,37 @@
  */
 
 // External dependencies
-import { useCallback, useState, DependencyList } from 'react';
+import { useCallback, DependencyList } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-    ResourceObjectOrObjects,
-    Response,
-    ResponseWithErrors,
-} from 'ts-json-api';
+import { ResponseWithErrors } from 'ts-json-api';
 
 // Internal dependencies
-import { JasonApiDispatch } from '../../types';
-import { cacheKeyForRequestAction } from '../../utils';
-import { JasonApiRequestAction, JASON_API } from '../actions';
-import { getCachedQuery } from '../selectors';
-import { StateWithJasonApi } from 'src/types/state';
+import { JasonApiDispatch } from '../../../types/redux';
+import { ResponseShape } from '../../../types/request';
+import { StateWithJasonApi } from '../../../types/state';
+import { cacheKeyForRequestAction } from '../../../utils';
+import { JasonApiRequestAction, JASON_API } from '../../actions';
+import { getCachedQuery } from '../../selectors';
+import { useRequestMachine } from './useRequestMachine';
 
 // We assume `deps` will be a static array and don't want
 // to use `request` as a dependency, since it is an object.
 /* eslint-disable react-hooks/exhaustive-deps */
 
-export interface UseRequestOptions<Data extends ResourceObjectOrObjects> {
+export interface UseRequestOptions<Data> {
     action: JasonApiRequestAction<Data>;
     cacheScheme?: 'cacheFirst' | 'cacheOnly' | 'noCache';
     expandResourceObjects?: boolean;
     onError?: (response: ResponseWithErrors) => void;
-    onSuccess?: (response: Response<Data>) => void;
+    onSuccess?: (response: ResponseShape<Data>) => void;
 }
 
-export type UseRequestResult<Data extends ResourceObjectOrObjects> = Response<
-    Data
-> & {
+export type UseRequestResult<Data = any> = {
+    response: ResponseShape<Data>;
     fetch: () => Promise<void>;
-    isLoading: boolean;
 };
 
-export const useRequest = <
-    Data extends ResourceObjectOrObjects = ResourceObjectOrObjects
->(
+export const useRequest = <Data = any>(
     {
         action,
         cacheScheme,
@@ -86,8 +80,7 @@ export const useRequest = <
     deps: DependencyList = []
 ) => {
     const dispatch = useDispatch<JasonApiDispatch>();
-    const [isLoading, setLoading] = useState(false);
-    const [response, setResponse] = useState<Response<Data>>();
+    const machine = useRequestMachine<Data>();
 
     // Preform the fetch and keep track of loading states.
     const fetch = useCallback(async () => {
@@ -96,14 +89,15 @@ export const useRequest = <
         }
 
         // Start loading.
-        setLoading(true);
+        machine.requestMade();
 
         // Get the response.
         try {
             const successResponse = await dispatch(action);
 
             // Store the success response.
-            setResponse(successResponse);
+            // @ts-ignore
+            machine.requestSuccess(successResponse);
 
             // Trigger optional success callback.
             if (onSuccess) {
@@ -112,34 +106,35 @@ export const useRequest = <
         } catch (e) {
             // The middleware always throws errors
             // as a valid JsonAPI error response.
-            const errorResponse = e as ResponseWithErrors<Data>;
+            const errorResponse = e as ResponseWithErrors;
 
             // Store error response.
-            setResponse(errorResponse);
+            machine.requestError(errorResponse);
 
             // Trigger optional error callback.
             if (onError) {
                 onError(errorResponse);
             }
         }
-
-        // Stop Loading.
-        setLoading(false);
     }, deps);
 
     // Get cached response.
     const cacheKey = cacheKeyForRequestAction(action[JASON_API]);
+
     const cachedResponse = useSelector((state: StateWithJasonApi) =>
         getCachedQuery(state, cacheKey, expandResourceObjects)
-    ) as Response<Data>;
+    ) as ResponseShape<Data>;
 
     // Determine correct response to return.
     const providedResponse =
-        cacheScheme === 'noCache' ? response : response || cachedResponse;
+        cacheScheme === 'noCache'
+            ? machine.state.response
+            : machine.state.response || cachedResponse;
 
     return {
-        ...providedResponse,
+        error: machine.state.error,
         fetch,
-        isLoading,
+        response: providedResponse,
+        status: machine.state.status,
     } as UseRequestResult<Data>;
 };
