@@ -1,6 +1,6 @@
 // External Dependencies
 import * as React from 'react';
-import { ResourceIdentifier, Response } from 'ts-json-api';
+import { ResourceIdentifier, ResponseWithData } from 'ts-json-api';
 
 // JasonAPI
 import { useRequest } from 'jason-api';
@@ -25,7 +25,7 @@ const CommentsContainer: React.SFC<CommentsProps> = ({ comments }) => {
     }, [comments]);
 
     const addNewCommentToLocalState = React.useCallback(
-        (response: Response<CommentResource>) => {
+        (response: ResponseWithData<CommentResource>) => {
             setComments(currentComments => {
                 if (!response.data) {
                     return currentComments;
@@ -42,7 +42,7 @@ const CommentsContainer: React.SFC<CommentsProps> = ({ comments }) => {
         []
     );
 
-    const doAddComment = useRequest({
+    const [requestState, makeRequest] = useRequest({
         action: addComment(),
         onSuccess: addNewCommentToLocalState,
     });
@@ -50,8 +50,8 @@ const CommentsContainer: React.SFC<CommentsProps> = ({ comments }) => {
     return (
         <Comments
             comments={internalComments}
-            onAddComment={doAddComment.fetch}
-            isLoading={doAddComment.isLoading}
+            onAddComment={makeRequest}
+            isLoading={requestState.status === 'loading'}
         />
     );
 };

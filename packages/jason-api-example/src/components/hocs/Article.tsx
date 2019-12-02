@@ -19,20 +19,29 @@ interface ArticleProps extends WithQueryInjectedProps<ArticleResource> {
 
 class Article extends React.Component<ArticleProps> {
     componentDidUpdate(prevProps: ArticleProps) {
+        const { request: prevRequest } = prevProps;
+        const prevResponse = prevRequest.response;
+
+        const { request } = this.props;
+        const response = request.response;
+
         // Scroll to top when a new Article is loaded.
-        if (prevProps.data !== this.props.data) {
+        if (prevResponse !== response) {
             document.body.scrollTop = 0;
         }
     }
 
     render() {
-        const { data: article, errors, fetch, isLoading } = this.props;
+        const { request, refetch } = this.props;
+
+        const article = request.response && request.response.data;
+        const isLoading = request.status === 'loading';
 
         return (
             <Root>
                 {!article && isLoading ? (
                     <Loading />
-                ) : errors ? (
+                ) : request.status === 'error' ? (
                     <div>Errors!</div>
                 ) : article ? (
                     <div>
@@ -56,7 +65,7 @@ class Article extends React.Component<ArticleProps> {
                             comments={article.relationships.comments.data}
                         />
 
-                        <Button disabled={isLoading} onClick={fetch}>
+                        <Button disabled={isLoading} onClick={refetch}>
                             {isLoading ? 'Fetching new Article…' : 'Refetch'}
                         </Button>
                     </div>

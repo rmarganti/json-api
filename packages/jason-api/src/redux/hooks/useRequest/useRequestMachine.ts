@@ -1,4 +1,4 @@
-import { Reducer, useReducer } from 'react';
+import { Reducer, useReducer, useCallback } from 'react';
 import { ResponseWithErrors } from 'ts-json-api';
 
 import { ResponseShape } from '../../../types/request';
@@ -12,22 +12,25 @@ import {
     UseRequestState,
 } from './types';
 
+/**
+ * Creates a state machine that tracks the status and result of an API request.
+ */
 export const useRequestMachine = <Data = any>(
     cachedResponse?: ResponseShape<Data>
 ): [UseRequestState<Data>, UseRequestActions<Data>] => {
-    const [state, dispatch] = useReducer(
-        createReducer<Data>(),
-        cachedResponse,
-        init
+    const [state, dispatch] = useReducer(reducer, cachedResponse, init);
+
+    const onRequestMade = useCallback(() => dispatch(requestMade()), []);
+
+    const onRequestSuccess = useCallback(
+        (response: ResponseShape<Data>) => dispatch(requestSuccess(response)),
+        []
     );
 
-    const onRequestMade = () => dispatch(requestMade());
-
-    const onRequestSuccess = (response: ResponseShape<Data>) =>
-        dispatch(requestSuccess(response));
-
-    const onRequestError = (response: ResponseWithErrors) =>
-        dispatch(requestError(response));
+    const onRequestError = useCallback(
+        (response: ResponseWithErrors) => dispatch(requestError(response)),
+        []
+    );
 
     return [
         state,
@@ -39,16 +42,19 @@ export const useRequestMachine = <Data = any>(
     ];
 };
 
-const createReducer = <Data = any>(): Reducer<
-    UseRequestState<Data>,
-    UseRequestAction
-> => (state, action) => {
+const REQUEST_MADE = 'REQUEST_MADE';
+const REQUEST_SUCCESS = 'REQUEST_SUCCESS';
+const REQUEST_ERROR = 'REQUEST_ERROR';
+
+const reducer: Reducer<UseRequestState, UseRequestAction> = (state, action) => {
     switch (state.status) {
         case 'idle':
             switch (action.type) {
-                case 'REQUEST_MADE':
+                case REQUEST_MADE:
                     return {
                         status: 'loading',
+                        error: null,
+                        response: state.response,
                     } as LoadingState;
 
                 default:
@@ -57,17 +63,18 @@ const createReducer = <Data = any>(): Reducer<
 
         case 'loading':
             switch (action.type) {
-                case 'REQUEST_SUCCESS':
+                case REQUEST_SUCCESS:
                     return {
                         status: 'success',
-                        error: undefined,
+                        error: null,
                         response: action.payload,
-                    } as SuccessState<Data>;
+                    } as SuccessState;
 
-                case 'REQUEST_ERROR':
+                case REQUEST_ERROR:
                     return {
                         status: 'error',
                         error: action.payload,
+                        response: state.response,
                     } as ErrorState;
 
                 default:
@@ -76,12 +83,12 @@ const createReducer = <Data = any>(): Reducer<
 
         case 'success':
             switch (action.type) {
-                case 'REQUEST_MADE':
+                case REQUEST_MADE:
                     return {
                         status: 'loading',
+                        error: null,
                         response: state.response,
-                        error: undefined,
-                    } as LoadingState<Data>;
+                    };
 
                 default:
                     return state;
@@ -89,36 +96,36 @@ const createReducer = <Data = any>(): Reducer<
 
         case 'error':
             switch (action.type) {
-                case 'REQUEST_MADE':
+                case REQUEST_MADE:
                     return {
                         status: 'loading',
-                        error: undefined,
-                    } as LoadingState<Data>;
+                        error: null,
+                        response: state.response,
+                    };
 
                 default:
                     return state;
             }
     }
-
-    return state;
 };
 
 const init = <Data = any>(
     cachedResponse?: ResponseShape<Data>
 ): IdleState<Data> => ({
     status: 'idle',
-    response: cachedResponse,
+    error: null,
+    response: cachedResponse || null,
 });
 
-const requestMade = () => createAction('REQUEST_MADE');
+const requestMade = () => createAction(REQUEST_MADE);
 type RequestMade = ReturnType<typeof requestMade>;
 
 const requestSuccess = <Data = any>(response: ResponseShape<Data>) =>
-    createAction('REQUEST_SUCCESS', response);
+    createAction(REQUEST_SUCCESS, response);
 type RequestSuccess = ReturnType<typeof requestSuccess>;
 
 const requestError = (response: ResponseWithErrors) =>
-    createAction('REQUEST_ERROR', response);
+    createAction(REQUEST_ERROR, response);
 type RequestError = ReturnType<typeof requestError>;
 
 type UseRequestAction = RequestMade | RequestSuccess | RequestError;

@@ -8,15 +8,15 @@ type Status = 'idle' | 'loading' | 'success' | 'error';
 
 interface BaseState<Data = any> {
     status: Status;
-    error?: ResponseWithErrors;
-    response?: ResponseShape<Data>;
+    error: ResponseWithErrors | null;
+    response: ResponseShape<Data> | null;
 }
 
 export type UseRequestState<Data = any> =
-    | IdleState
+    | IdleState<Data>
     | LoadingState<Data>
     | SuccessState<Data>
-    | ErrorState;
+    | ErrorState<Data>;
 
 export interface IdleState<Data = any> extends BaseState<Data> {
     status: 'idle';
@@ -24,17 +24,16 @@ export interface IdleState<Data = any> extends BaseState<Data> {
 
 export interface LoadingState<Data = any> extends BaseState<Data> {
     status: 'loading';
-    error: undefined;
-    response?: ResponseShape<Data>;
+    error: null;
 }
 
 export interface SuccessState<Data = any> extends BaseState<Data> {
     status: 'success';
-    error: undefined;
+    error: null;
     response: ResponseShape<Data>;
 }
 
-export interface ErrorState extends BaseState {
+export interface ErrorState<Data = any> extends BaseState<Data> {
     status: 'error';
     error: ResponseWithErrors;
 }

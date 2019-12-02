@@ -28,7 +28,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 // External dependencies
-import { DependencyList, useEffect } from 'react';
+import { DependencyList, useLayoutEffect } from 'react';
 
 // Internal dependencies
 import { useRequest, UseRequestOptions, UseRequestResult } from './useRequest';
@@ -40,7 +40,7 @@ export const useAutoRequest = <Data = any>(
     const [request, fetch] = useRequest<Data>(options, deps);
 
     // Make the request
-    useEffect(() => {
+    useLayoutEffect(() => {
         fetch();
     }, deps);
 

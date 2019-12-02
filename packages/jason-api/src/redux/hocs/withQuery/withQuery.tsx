@@ -21,9 +21,10 @@ interface WithQueryOptions<R extends ResourceObjectOrObjects> {
     propsToWatch?: string[];
 }
 
-export type WithQueryInjectedProps<
-    Data extends ResourceObjectOrObjects = ResourceObjectOrObjects
-> = UseRequestResult<Data>;
+export interface WithQueryInjectedProps<Data = any> {
+    request: UseRequestResult<Data>[0];
+    refetch: UseRequestResult<Data>[1];
+}
 
 export const withQuery = <
     Data extends ResourceObjectOrObjects = ResourceObjectOrObjects
@@ -43,7 +44,7 @@ export const withQuery = <
     const WithQuery: React.FunctionComponent<ExternalProps> = externalProps => {
         const action = actionFactory(externalProps);
 
-        const request = useAutoRequest<Data>({
+        const [request, refetch] = useAutoRequest<Data>({
             action,
             cacheScheme,
             expandResourceObjects,
@@ -53,7 +54,8 @@ export const withQuery = <
 
         const passedProps = {
             ...externalProps,
-            ...request,
+            request,
+            refetch,
         } as OriginalProps;
 
         return <BaseComponent {...passedProps} />;

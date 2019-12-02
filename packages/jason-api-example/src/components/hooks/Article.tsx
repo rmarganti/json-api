@@ -18,15 +18,16 @@ interface ArticleProps {
 }
 
 const Article: React.FunctionComponent<ArticleProps> = ({ id }) => {
-    const { data: article, errors, isLoading, fetch } = useAutoRequest<
-        ArticleResource
-    >(
+    const [request, refetch] = useAutoRequest<ArticleResource>(
         {
             action: getArticle(id),
             expandResourceObjects: true,
         },
         [id]
     );
+
+    const article = request.response && request.response.data;
+    const isLoading = request.status === 'loading';
 
     // Scroll to top when a new Article is loaded.
     React.useLayoutEffect(() => {
@@ -35,9 +36,9 @@ const Article: React.FunctionComponent<ArticleProps> = ({ id }) => {
 
     return (
         <Root>
-            {!article && isLoading ? (
+            {isLoading && !article ? (
                 <Loading />
-            ) : errors ? (
+            ) : request.status === 'error' ? (
                 <div>Errors!</div>
             ) : article ? (
                 <div>
@@ -58,7 +59,7 @@ const Article: React.FunctionComponent<ArticleProps> = ({ id }) => {
 
                     <Comments comments={article.relationships.comments.data} />
 
-                    <Button disabled={isLoading} onClick={fetch}>
+                    <Button disabled={isLoading} onClick={refetch}>
                         {isLoading ? 'Fetching new Article…' : 'Refetch'}
                     </Button>
                 </div>

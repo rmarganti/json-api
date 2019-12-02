@@ -1,6 +1,4 @@
 // External dependencies
-import axios from 'axios';
-import MockAdapter from 'axios-mock-adapter';
 import * as React from 'react';
 
 // Internal dependencies
@@ -10,25 +8,25 @@ import { useAutoRequest } from '../useAutoRequest';
 // Testing dependencies
 import { articleResponse } from '__mocks__/articleResponse';
 import { ArticleResource } from '__mocks__/types';
+import { mockAxios } from '__tests__/tools';
 
 // Mock Action Creator
 const mockAction = (articleId: string) =>
     jasonApiRequest<ArticleResource>({
-        url: `/api/article/${articleId}`,
+        url: `/api/articles/${articleId}`,
     });
 
-const mock = new MockAdapter(axios);
-mock.onGet().reply(200, articleResponse);
+mockAxios.onGet('/api/articles/autoRequest').replyOnce(200, articleResponse);
 
 const AutoRequestComponent: React.FunctionComponent = () => {
-    const action = mockAction('1');
-    const response = useAutoRequest({
+    const action = mockAction('autoRequest');
+    const [request] = useAutoRequest({
         action,
         expandResourceObjects: true,
     });
 
-    return response.data ? (
-        <h1 id="title">{response.data.attributes.title}</h1>
+    return request.response ? (
+        <h1 id="title">{request.response.data.attributes.title}</h1>
     ) : null;
 };
 

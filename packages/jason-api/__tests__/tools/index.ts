@@ -1,4 +1,7 @@
 // 3rd Party dependencies
+import axios from 'axios';
+import MockAdapter from 'axios-mock-adapter';
+import { act } from 'react-dom/test-utils';
 import { applyMiddleware, createStore, combineReducers } from 'redux';
 
 // // Internal dependencies
@@ -28,3 +31,21 @@ export const defaultStore = createStore(
     { jasonApi: defaultState },
     applyMiddleware(jasonApiMiddleware)
 );
+
+// Create mock Axios adapter.
+export const mockAxios = new MockAdapter(axios);
+
+/**
+ * Pause a test for the given ammount of milliseconds.
+ */
+export const sleepTest = async (timeout: number) => {
+    await act(async () => {
+        await sleep(timeout);
+    });
+};
+
+/**
+ * Create a Promise that resolves after the given number of milliseconds.
+ */
+const sleep = (timeout: number) =>
+    new Promise(resolve => setTimeout(resolve, timeout));
