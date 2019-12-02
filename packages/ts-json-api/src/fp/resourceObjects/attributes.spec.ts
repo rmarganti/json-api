@@ -3,7 +3,7 @@ import {
     attributeOr,
     attributes,
     setAttribute,
-    updateAttributes
+    updateAttributes,
 } from './attributes';
 
 import { itemResponse } from '../../../__mocks__/itemResponse';
@@ -15,7 +15,7 @@ describe('Relationship Object attribute functions', () => {
         const result = attributes(article);
 
         expect(result).toEqual({
-            title: 'JSON API paints my bikeshed!'
+            title: 'JSON API paints my bikeshed!',
         });
     });
 
@@ -41,7 +41,7 @@ describe('Relationship Object attribute functions', () => {
         const result = updateAttributes(
             {
                 flavor: 'Piña colada',
-                subtitle: 'How I Spent My Summer Vacation'
+                subtitle: 'How I Spent My Summer Vacation',
             },
             article
         );
@@ -49,7 +49,7 @@ describe('Relationship Object attribute functions', () => {
         expect(result.attributes).toEqual({
             flavor: 'Piña colada',
             subtitle: 'How I Spent My Summer Vacation',
-            title: 'JSON API paints my bikeshed!' // This is untouched
+            title: 'JSON API paints my bikeshed!', // This is untouched
         });
     });
 });

@@ -14,15 +14,16 @@ describe('JsonApiResponse', () => {
     });
 
     it('builds a new JsonApiResponse', () => {
-        expect(jsonApiResponse.hasError()).toBeFalsy;
+        expect(jsonApiResponse.hasError()).toBeFalsy();
         expect(jsonApiResponse.errors()).toEqual([]);
         expect(jsonApiResponse.data()).toBeInstanceOf(ApiResourceObject);
 
-        expect(Array.isArray(jsonApiResponse.included())).toBeTruthy;
+        expect(Array.isArray(jsonApiResponse.included())).toBeTruthy();
         expect(jsonApiResponse.included()[0]).toBeInstanceOf(ApiResourceObject);
     });
 
     it('expands a relationship to the full include', () => {
+        // @ts-ignore
         const author = jsonApiResponse.data().relationship('author');
         const expandedAuthor = jsonApiResponse.expandInclude(author);
 
@@ -33,6 +34,7 @@ describe('JsonApiResponse', () => {
         const changeTypeToBooks = set(lensPath(['data', 'type']), 'books');
 
         const result = jsonApiResponse.map(changeTypeToBooks);
+        // @ts-ignore
         expect(result.data().type()).toEqual('books');
     });
 });

@@ -4,7 +4,7 @@ import {
     relationshipData,
     relationships,
     removeRelationship,
-    setRelationship
+    setRelationship,
 } from './relationships';
 
 import { itemResponse } from '../../../__mocks__/itemResponse';
@@ -40,7 +40,7 @@ describe('Resource Objects relationship functions', () => {
         // @ts-ignore
         expect(comments[2]).toEqual({
             type: 'comments',
-            id: '4444'
+            id: '4444',
         });
     });
 
@@ -54,7 +54,7 @@ describe('Resource Objects relationship functions', () => {
         // @ts-ignore
         expect(comments[0]).toEqual({
             type: 'comments',
-            id: '5'
+            id: '5',
         });
     });
 
@@ -63,7 +63,7 @@ describe('Resource Objects relationship functions', () => {
 
         expect(result.relationships!.author.data).toEqual({
             type: 'people',
-            id: '9999'
+            id: '9999',
         });
     });
 });
