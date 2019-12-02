@@ -82,6 +82,6 @@ export interface RequestConfig<
  * response, where the `data` properties is `T`. Otherwise, `T` is
  * assumed to be the full shape of the response.
  */
-export type ResponseShape<T = any> = T extends ResourceObjectOrObjects
-    ? ResponseWithData<T>
-    : T;
+export type ResponseShape<Data = any> = Data extends ResourceObjectOrObjects
+    ? ResponseWithData<Data>
+    : Data;

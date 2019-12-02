@@ -13,24 +13,19 @@
  *
  * import { ArticleResource } from './your-types.ts';
  *
- * const fetchArticles = () => jasonApiRequest<ArticleResource>({
+ * const fetchArticles = () => jasonApiRequest<ArticleResource[]>({
  *     url: '/api/articles',
  * });
  *
  * const ArticlesList: React.FunctionComponent = () => {
  *     const action = fetchArticles();
- *
- *     const { data, errors, fetch, isLoading } = useRequest(
- *          { action },
- *     );
+ *     const [request, refech] = useRequest({ action });
  *
  *     return (
- *         <button onClick={acceptYourHookOverlords.fetch}>
- *             {
- *                 isLoading
- *                     ? 'Please wait…'
- *                     : <pre>{JSON.stringify(data, null, 4)}</pre>
- *             }
+ *         <button onClick={refetch}>
+ *             { request.status === 'loading' && <span>Please wait...</span> }
+ *             { request.status === 'success' && <pre>{JSON.stringify(data, null, 4)}</pre> }
+ *             { request.status === 'error' && <span>Error!</span> }
  *         </button>
  *     );
  * };
@@ -51,6 +46,7 @@ import { cacheKeyForRequestAction } from '../../../utils';
 import { JasonApiRequestAction, JASON_API } from '../../actions';
 import { getCachedQuery } from '../../selectors';
 import { useRequestMachine } from './useRequestMachine';
+import { UseRequestState } from './types';
 
 // We assume `deps` will be a static array and don't want
 // to use `request` as a dependency, since it is an object.
@@ -64,10 +60,10 @@ export interface UseRequestOptions<Data> {
     onSuccess?: (response: ResponseShape<Data>) => void;
 }
 
-export type UseRequestResult<Data = any> = {
-    response: ResponseShape<Data>;
-    fetch: () => Promise<void>;
-};
+export type UseRequestResult<Data = any> = [
+    UseRequestState<Data>,
+    () => Promise<void>
+];
 
 export const useRequest = <Data = any>(
     {
@@ -78,9 +74,18 @@ export const useRequest = <Data = any>(
         onSuccess,
     }: UseRequestOptions<Data>,
     deps: DependencyList = []
-) => {
+): UseRequestResult<Data> => {
+    // Get cached response.
+    const cacheKey = cacheKeyForRequestAction(action[JASON_API]);
+
+    const cachedResponse = useSelector((state: StateWithJasonApi) =>
+        getCachedQuery(state, cacheKey, expandResourceObjects)
+    ) as ResponseShape<Data>;
+
     const dispatch = useDispatch<JasonApiDispatch>();
-    const machine = useRequestMachine<Data>();
+    const [state, actions] = useRequestMachine<Data>(
+        cacheScheme === 'noCache' ? undefined : cachedResponse
+    );
 
     // Preform the fetch and keep track of loading states.
     const fetch = useCallback(async () => {
@@ -89,15 +94,14 @@ export const useRequest = <Data = any>(
         }
 
         // Start loading.
-        machine.requestMade();
+        actions.requestMade();
 
         // Get the response.
         try {
             const successResponse = await dispatch(action);
 
             // Store the success response.
-            // @ts-ignore
-            machine.requestSuccess(successResponse);
+            actions.requestSuccess(successResponse);
 
             // Trigger optional success callback.
             if (onSuccess) {
@@ -109,7 +113,7 @@ export const useRequest = <Data = any>(
             const errorResponse = e as ResponseWithErrors;
 
             // Store error response.
-            machine.requestError(errorResponse);
+            actions.requestError(errorResponse);
 
             // Trigger optional error callback.
             if (onError) {
@@ -118,23 +122,5 @@ export const useRequest = <Data = any>(
         }
     }, deps);
 
-    // Get cached response.
-    const cacheKey = cacheKeyForRequestAction(action[JASON_API]);
-
-    const cachedResponse = useSelector((state: StateWithJasonApi) =>
-        getCachedQuery(state, cacheKey, expandResourceObjects)
-    ) as ResponseShape<Data>;
-
-    // Determine correct response to return.
-    const providedResponse =
-        cacheScheme === 'noCache'
-            ? machine.state.response
-            : machine.state.response || cachedResponse;
-
-    return {
-        error: machine.state.error,
-        fetch,
-        response: providedResponse,
-        status: machine.state.status,
-    } as UseRequestResult<Data>;
+    return [state, fetch];
 };

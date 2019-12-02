@@ -1,21 +1,46 @@
 import { Reducer, useReducer } from 'react';
 import { ResponseWithErrors } from 'ts-json-api';
 
+import { ResponseShape } from '../../../types/request';
 import { createAction } from '../../../utils';
 import {
     ErrorState,
     IdleState,
     LoadingState,
     SuccessState,
-    UseRequestReducerState,
+    UseRequestActions,
+    UseRequestState,
 } from './types';
 
-const initialState: IdleState = {
-    status: 'idle',
+export const useRequestMachine = <Data = any>(
+    cachedResponse?: ResponseShape<Data>
+): [UseRequestState<Data>, UseRequestActions<Data>] => {
+    const [state, dispatch] = useReducer(
+        createReducer<Data>(),
+        cachedResponse,
+        init
+    );
+
+    const onRequestMade = () => dispatch(requestMade());
+
+    const onRequestSuccess = (response: ResponseShape<Data>) =>
+        dispatch(requestSuccess(response));
+
+    const onRequestError = (response: ResponseWithErrors) =>
+        dispatch(requestError(response));
+
+    return [
+        state,
+        {
+            requestError: onRequestError,
+            requestMade: onRequestMade,
+            requestSuccess: onRequestSuccess,
+        },
+    ];
 };
 
-const createReducer = <T = any>(): Reducer<
-    UseRequestReducerState<T>,
+const createReducer = <Data = any>(): Reducer<
+    UseRequestState<Data>,
     UseRequestAction
 > => (state, action) => {
     switch (state.status) {
@@ -37,7 +62,7 @@ const createReducer = <T = any>(): Reducer<
                         status: 'success',
                         error: undefined,
                         response: action.payload,
-                    } as SuccessState<T>;
+                    } as SuccessState<Data>;
 
                 case 'REQUEST_ERROR':
                     return {
@@ -56,7 +81,7 @@ const createReducer = <T = any>(): Reducer<
                         status: 'loading',
                         response: state.response,
                         error: undefined,
-                    } as LoadingState<T>;
+                    } as LoadingState<Data>;
 
                 default:
                     return state;
@@ -68,7 +93,7 @@ const createReducer = <T = any>(): Reducer<
                     return {
                         status: 'loading',
                         error: undefined,
-                    } as LoadingState<T>;
+                    } as LoadingState<Data>;
 
                 default:
                     return state;
@@ -78,39 +103,21 @@ const createReducer = <T = any>(): Reducer<
     return state;
 };
 
-export const useRequestMachine = <T = any>() => {
-    const [state, dispatch] = useReducer(
-        createReducer<T>(),
-        initialState as UseRequestReducerState<T>
-    );
+const init = <Data = any>(
+    cachedResponse?: ResponseShape<Data>
+): IdleState<Data> => ({
+    status: 'idle',
+    response: cachedResponse,
+});
 
-    const onRequestMade = () => dispatch(requestMade());
-
-    const onRequestSuccess = (response: T) =>
-        dispatch(requestSuccess(response));
-
-    const onRequestError = (response: ResponseWithErrors) =>
-        dispatch(requestError(response));
-
-    return {
-        state,
-        requestError: onRequestError,
-        requestMade: onRequestMade,
-        requestSuccess: onRequestSuccess,
-    };
-};
-
-/**
- * An API request is currently being made
- */
-export const requestMade = () => createAction('REQUEST_MADE');
+const requestMade = () => createAction('REQUEST_MADE');
 type RequestMade = ReturnType<typeof requestMade>;
 
-export const requestSuccess = <T = any>(response: T) =>
+const requestSuccess = <Data = any>(response: ResponseShape<Data>) =>
     createAction('REQUEST_SUCCESS', response);
 type RequestSuccess = ReturnType<typeof requestSuccess>;
 
-export const requestError = (response: ResponseWithErrors) =>
+const requestError = (response: ResponseWithErrors) =>
     createAction('REQUEST_ERROR', response);
 type RequestError = ReturnType<typeof requestError>;
 

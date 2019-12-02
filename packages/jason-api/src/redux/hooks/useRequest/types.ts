@@ -6,35 +6,41 @@ import { ResponseShape } from '../../../types/request';
 
 type Status = 'idle' | 'loading' | 'success' | 'error';
 
-interface BaseState<T = any> {
+interface BaseState<Data = any> {
     status: Status;
     error?: ResponseWithErrors;
-    response?: ResponseShape<T>;
+    response?: ResponseShape<Data>;
 }
 
-export type UseRequestReducerState<T = any> =
+export type UseRequestState<Data = any> =
     | IdleState
-    | LoadingState<T>
-    | SuccessState<T>
+    | LoadingState<Data>
+    | SuccessState<Data>
     | ErrorState;
 
-export interface IdleState extends BaseState {
+export interface IdleState<Data = any> extends BaseState<Data> {
     status: 'idle';
 }
 
-export interface LoadingState<T = any> extends BaseState<T> {
+export interface LoadingState<Data = any> extends BaseState<Data> {
     status: 'loading';
     error: undefined;
-    response?: ResponseShape<T>;
+    response?: ResponseShape<Data>;
 }
 
-export interface SuccessState<T = any> extends BaseState<T> {
+export interface SuccessState<Data = any> extends BaseState<Data> {
     status: 'success';
     error: undefined;
-    response: ResponseShape<T>;
+    response: ResponseShape<Data>;
 }
 
 export interface ErrorState extends BaseState {
     status: 'error';
     error: ResponseWithErrors;
+}
+
+export interface UseRequestActions<Data = any> {
+    requestError: (response: ResponseWithErrors) => void;
+    requestMade: () => void;
+    requestSuccess: (response: ResponseShape<Data>) => void;
 }

@@ -29,23 +29,20 @@
 
 // External dependencies
 import { DependencyList, useEffect } from 'react';
-import { ResourceObjectOrObjects } from 'ts-json-api';
 
 // Internal dependencies
-import { useRequest, UseRequestOptions } from './useRequest';
+import { useRequest, UseRequestOptions, UseRequestResult } from './useRequest';
 
-export const useAutoRequest = <
-    Data extends ResourceObjectOrObjects = ResourceObjectOrObjects
->(
+export const useAutoRequest = <Data = any>(
     options: UseRequestOptions<Data>,
     deps: DependencyList = []
-) => {
-    const request = useRequest<Data>(options, deps);
+): UseRequestResult<Data> => {
+    const [request, fetch] = useRequest<Data>(options, deps);
 
     // Make the request
     useEffect(() => {
-        request.fetch();
+        fetch();
     }, deps);
 
-    return request;
+    return [request, fetch];
 };
