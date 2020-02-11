@@ -25,3 +25,5 @@ export type ActionCreatorsMapObject = { [actionCreator: string]: FunctionType };
 export type ActionsUnion<A extends ActionCreatorsMapObject> = ReturnType<
     A[keyof A]
 >;
+
+export type CacheScheme = 'cacheFirst' | 'cacheOnce' | 'cacheOnly' | 'noCache';

@@ -3,7 +3,7 @@ import { pick, values } from 'ramda';
 import * as React from 'react';
 
 // Internal dependencies
-import { Subtract } from '../../../types/other';
+import { CacheScheme, Subtract } from '../../../types/other';
 import { JasonApiRequestAction } from '../../actions/jasonApiRequest';
 import { useAutoRequest } from '../../hooks/useAutoRequest';
 import { UseRequestOptions, UseRequestResult } from '../../hooks/useRequest';
@@ -12,7 +12,7 @@ type QueryFactory<Data = any> = (props: any) => JasonApiRequestAction<Data>;
 
 interface WithQueryOptions<Data = any> {
     actionFactory: QueryFactory<Data>;
-    cacheScheme?: 'cacheFirst' | 'cacheOnly' | 'noCache';
+    cacheScheme?: CacheScheme;
     expandResourceObjects?: boolean;
     onError?: UseRequestOptions<Data>['onError'];
     onSuccess?: UseRequestOptions<Data>['onSuccess'];

@@ -39,6 +39,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ResponseWithErrors } from 'ts-json-api';
 
 // Internal dependencies
+import { CacheScheme } from '../../../types/other';
 import { JasonApiDispatch } from '../../../types/redux';
 import { ResponseShape } from '../../../types/request';
 import { StateWithJasonApi } from '../../../types/state';
@@ -54,7 +55,7 @@ import { UseRequestState } from './types';
 
 export interface UseRequestOptions<Data> {
     action: JasonApiRequestAction<Data>;
-    cacheScheme?: 'cacheFirst' | 'cacheOnly' | 'noCache';
+    cacheScheme?: CacheScheme;
     expandResourceObjects?: boolean;
     onError?: (response: ResponseWithErrors) => void;
     onSuccess?: (response: ResponseShape<Data>) => void;
@@ -68,8 +69,8 @@ export type UseRequestResult<Data = any> = [
 export const useRequest = <Data = any>(
     {
         action,
-        cacheScheme,
-        expandResourceObjects,
+        cacheScheme = 'cacheFirst',
+        expandResourceObjects = false,
         onError,
         onSuccess,
     }: UseRequestOptions<Data>,
@@ -92,6 +93,12 @@ export const useRequest = <Data = any>(
     const fetch = useCallback(async () => {
         // Do not fetch if a previous request is still loading.
         if (cacheScheme === 'cacheOnly' || state.status === 'loading') {
+            return;
+        }
+
+        // Do not initiate request if cache scheme is
+        // `cacheOnce`, and we already have a cached response.
+        if (cacheScheme === 'cacheOnce' && cachedResponse) {
             return;
         }
 
@@ -122,7 +129,7 @@ export const useRequest = <Data = any>(
                 onError(errorResponse);
             }
         }
-    }, deepDependencyCheck(deps));
+    }, [state.status, cachedResponse, ...deepDependencyCheck(deps)]);
 
     return [state, fetch];
 };
