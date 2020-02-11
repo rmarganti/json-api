@@ -3,18 +3,25 @@ import * as React from 'react';
 
 // Internal dependencies
 import { jasonApiRequest } from '../../../actions';
-import { withQuery, WithQueryInjectedProps } from '../withQuery';
+import {
+    withAutoRequest,
+    WithAutoRequestInjectedProps,
+} from '../withAutoRequest';
 
 // Testing dependencies
 import { articleResponse } from '__mocks__/articleResponse';
 import { ArticleResource } from '__mocks__/types';
 import { mockAxios } from '__tests__/tools';
 
-mockAxios.onGet('/api/articles/withQuery').replyOnce(200, articleResponse);
+mockAxios
+    .onGet('/api/articles/withAutoRequest')
+    .replyOnce(200, articleResponse);
 
-type WithQueryComponentProps = WithQueryInjectedProps<ArticleResource>;
+type WithAutoRequestComponentProps = WithAutoRequestInjectedProps<
+    ArticleResource
+>;
 
-const WithQueryComponent: React.FunctionComponent<WithQueryComponentProps> = ({
+const WithAutoRequestComponent: React.FunctionComponent<WithAutoRequestComponentProps> = ({
     request,
 }) => {
     const title =
@@ -25,9 +32,9 @@ const WithQueryComponent: React.FunctionComponent<WithQueryComponentProps> = ({
     return <h1>{title}</h1>;
 };
 
-export default withQuery<ArticleResource>({
+export default withAutoRequest<ArticleResource>({
     actionFactory: () =>
         jasonApiRequest({
-            url: '/api/articles/withQuery',
+            url: '/api/articles/withAutoRequest',
         }),
-})(WithQueryComponent);
+})(WithAutoRequestComponent);

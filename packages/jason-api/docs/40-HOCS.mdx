@@ -7,15 +7,15 @@ import Parameters from '../src/utils/Parameters.tsx';
 
 # High Order Components
 
-## withQuery()
-`withQuery` triggers and manages JasonAPI actions. With it, you get caching,
+## withAutoRequest()
+`withAutoRequest` triggers and manages JasonAPI actions. With it, you get caching,
 loading status management, and error handling.
 
 ```ts
-import { withQuery, WithQueryInjectedProps } from 'jason-api';
+import { withAutoRequest, WithAutoRequestInjectedProps } from 'jason-api';
 import { fetchUser } from './yourActions';
 
-interface User extends WithQueryInjectedProps<UserResource> {
+interface User extends WithAutoRequestInjectedProps<UserResource> {
     id: string;
 }
 
@@ -37,9 +37,9 @@ const User = ({
     ) : null;
 }
 
-const enhance = withQuery({
+const enhance = withAutoRequest({
     // fetchUser should return a JasonAPI request action.
-    queryFactory: ({ id }) => fetchUser(id),
+    actionFactory: ({ id }) => fetchUser(id),
     expandResourceObjects: true,
     propsToWatch: ['id'],
 });
@@ -96,7 +96,7 @@ to grab, or you can pass in a simplified resource object via the `data` prop
 to get the expanded resource object.
 
 Your Component will receive your resource object in the `data` prop, similar
-to `withQuery` above. However, you will not receive `isLoading`, etc., since
+to `withAutoRequest` above. However, you will not receive `isLoading`, etc., since
 `withItem` does not trigger an async request.
 
 ```ts
@@ -120,7 +120,7 @@ const EnhancedUser = enhance(YourUserComponent);
 <EnhancedUser id="12345" />
 
 // Useful for iterating over the Resource Identifiers
-// returned from a `withQuery` collection response.
+// returned from a `withAutoRequest()` collection response.
 <EnhancedUser data={{ type: 'users', id: '12345' }} />
 ```
 

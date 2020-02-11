@@ -17,7 +17,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 -   Complete rewrite from ground up.
 -   Much stronger & flexible typing.
 -   Replaced `JASON_API_REQUEST` actions with `jasonApiRequest()` action creator.
--   `withQuery()` uses `actionFactory` that expects the result of a `jasonApiRequest()`
+-   Renamed `withQuery()` to `withAutoRequest()` to more closely match `useAutoRequest()`.
+-   `withAutoRequest()` uses `actionFactory` that expects the result of a `jasonApiRequest()`
     instead of `queryFactory`, which simply expected a Promise.
 
 ### Fixed

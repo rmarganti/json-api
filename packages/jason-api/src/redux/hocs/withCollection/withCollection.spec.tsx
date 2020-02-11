@@ -7,7 +7,7 @@ import { Provider } from 'react-redux';
 import { defaultStore } from '__tests__/tools';
 import WithCollectionComponent from './__mocks__/WithCollectionComponent';
 
-describe('withQuery()', () => {
+describe('withAutoRequest()', () => {
     it('requests and injects a query', () => {
         const { container, getByText } = render(
             <Provider store={defaultStore}>

@@ -3,7 +3,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 
 // JasonAPI
-import { withQuery, WithQueryInjectedProps } from 'jason-api';
+import { withAutoRequest, WithAutoRequestInjectedProps } from 'jason-api';
 
 // Internal Dependencies
 import { getArticle } from '../../actions';
@@ -13,7 +13,7 @@ import Loading from '../common/Loading';
 import Comments from './Comments';
 import Author from './Author';
 
-interface ArticleProps extends WithQueryInjectedProps<ArticleResource> {
+interface ArticleProps extends WithAutoRequestInjectedProps<ArticleResource> {
     id: string;
 }
 
@@ -83,7 +83,7 @@ const Root = styled.div`
     font-family: sans-serif;
 `;
 
-export default withQuery({
+export default withAutoRequest({
     actionFactory: (props: ArticleProps) => getArticle(props.id),
     expandResourceObjects: true,
     propsToWatch: ['id'],

@@ -10,7 +10,7 @@ import { UseRequestOptions, UseRequestResult } from '../../hooks/useRequest';
 
 type QueryFactory<Data = any> = (props: any) => JasonApiRequestAction<Data>;
 
-interface WithQueryOptions<Data = any> {
+interface WithAutoRequestOptions<Data = any> {
     actionFactory: QueryFactory<Data>;
     cacheScheme?: CacheScheme;
     expandResourceObjects?: boolean;
@@ -19,26 +19,29 @@ interface WithQueryOptions<Data = any> {
     propsToWatch?: string[];
 }
 
-export interface WithQueryInjectedProps<Data = any> {
+export interface WithAutoRequestInjectedProps<Data = any> {
     request: UseRequestResult<Data>[0];
     refetch: UseRequestResult<Data>[1];
 }
 
-export const withQuery = <Data extends any = any>({
+export const withAutoRequest = <Data extends any = any>({
     actionFactory,
     cacheScheme = 'cacheFirst',
     expandResourceObjects = false,
     onError,
     onSuccess,
     propsToWatch = [],
-}: WithQueryOptions<Data>) => <
-    OriginalProps extends WithQueryInjectedProps<Data>
+}: WithAutoRequestOptions<Data>) => <
+    OriginalProps extends WithAutoRequestInjectedProps<Data>
 >(
     BaseComponent: React.ComponentType<OriginalProps>
 ) => {
-    type ExternalProps = Subtract<OriginalProps, WithQueryInjectedProps<Data>>;
+    type ExternalProps = Subtract<
+        OriginalProps,
+        WithAutoRequestInjectedProps<Data>
+    >;
 
-    const WithQuery: React.FunctionComponent<ExternalProps> = externalProps => {
+    const WithAutoRequest: React.FunctionComponent<ExternalProps> = externalProps => {
         const action = actionFactory(externalProps);
         const watchedPropValues = values(pick(propsToWatch, externalProps));
 
@@ -62,5 +65,5 @@ export const withQuery = <Data extends any = any>({
         return <BaseComponent {...passedProps} />;
     };
 
-    return WithQuery;
+    return WithAutoRequest;
 };
