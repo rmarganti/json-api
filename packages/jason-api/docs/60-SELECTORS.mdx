@@ -1,0 +1,57 @@
+---
+name: Selectors
+route: /selectors
+---
+
+# Selectors
+
+
+## Retrieving resource objects from the store
+
+```ts
+import { getResourceObject, getResourceObjects } from 'jason-api';
+
+// Get single article
+const article = getResourceObject<ArticleResource>(state, 'article', articleId);
+
+// Get all articles
+const articles = getResourceObjects<ArticleResource>(state, 'articles');
+
+// Get array of articles
+const articles = getResourceObjects<ArticleResource>(
+    state,
+    'articles',
+    [id1, id2, id3]
+);
+```
+
+## Metadata
+
+```ts
+import { getResourceObjectsMeta, getResourceObjectMeta } from 'jason-api';
+
+// Get all metadata for an resource object type
+const metadata = getResourceObjectsMeta(state, 'articles');
+
+// Get a specific metadata value for an resource object type
+const isLoading = getResourceObjectsMeta(
+    state,
+    'articles',
+    'isLoading'
+);
+
+// Get all metadata for a specific resource object
+const metadata = getResourceObjectMeta(
+    state,
+    'articles',
+    '123'
+);
+
+// Get a specific metadata value for a specific resource object
+const isLoading = getResourceObjectMeta(
+    state,
+    'articles',
+    '123',
+    'isLoading'
+);
+```

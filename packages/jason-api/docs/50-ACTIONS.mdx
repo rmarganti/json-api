@@ -1,0 +1,124 @@
+---
+name: Actions
+route: /actions
+---
+
+# Actions
+
+While JasonAPI shines when it can manage locally-stored data itself, sometimes you'll need to
+update it yourself. Below are a handful of action creators that will allow you to do just that.
+
+## Consuming JSON data
+
+```ts
+import { loadJsonApiResourceObjectData } from 'jason-api';
+
+dispatch(
+    loadJsonApiResourceObjectData(jsonApiResponseFromServer)
+);
+```
+
+## Manipulating resource objects
+
+```ts
+import {
+    addRelationshipToResourceObject,
+    removeRelationshipFromResourceObject,
+    updateResourceObject,
+} from 'jason-api';
+
+/**
+ * Example: 
+ *
+ * dispatch(updateResourceObject('article', articleId, {
+ *     isUserFavorite: true
+ * }));
+ */
+dispatch(
+    updateResourceObject(resourceObjectKey, resourceObjectId, dataObject)
+);
+
+/**
+ * Example:
+ *
+ * dispatch(addRelationshipToResourceObject('article', '54321', 'readers', {
+ *     type: 'user',
+ *     id: '12345',
+ *     attributes: { name: "Bob Ross" }
+ * }));
+ */
+dispatch(
+    addRelationshipToResourceObject(
+        resourceObjectKey,
+        resourceObjectId,
+        relationshipKey,
+        relationshipJsonApiObject
+    )
+);
+
+/**
+ * Example:
+ *
+ * You can also add relationships by ID.
+ * dispatch(addRelationshipToResourceObject(
+ *     'article', '54321', 'readers', '12345'
+ * ));
+ */
+dispatch(
+    addRelationshipToResourceObject(
+        resourceObjectKey,
+        resourceObjectId,
+        relationshipKey,
+        relationshipJsonApiObject
+    )
+);
+
+/**
+ * Example:
+ *
+ * dispatch(removeRelationshipFromResourceObject(
+ *     'article', '54321', 'readers', '12345'
+ * ));
+ */
+dispatch(
+    removeRelationshipFromResourceObject(
+        resourceObjectKey,
+        resourceObjectId,
+        relationshipKey,
+        relationshipId
+    );
+    ``
+);
+```
+
+## Removing resource objects from the store
+
+```ts
+import { removeResourceObject, clearResourceObjectType } from 'jason-api';
+
+// Remove a single resource object
+dispatch(
+    removeResourceObject('articles', '1')
+);
+
+// Remove all resource objects from an resource object type
+dispatch(
+    clearResourceObjectType('articles')
+);
+```
+
+## Metadata
+
+```ts
+import { updateResourceObjectsMeta, updateResourceObjectMeta } from 'jason-api';
+
+// Set a metadata value for a resource object type
+dispatch(
+    updateResourceObjectsMeta('articles', 'isLoading', true)
+);
+
+// Set a metadata value for a specific resource object
+dispatch(
+    updateResourceObjectMeta('articles', '123', 'isLoading', true)
+);
+```

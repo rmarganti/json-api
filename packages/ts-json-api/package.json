@@ -1,0 +1,35 @@
+{
+    "name": "ts-json-api",
+    "version": "1.0.0-beta.4",
+    "author": "Ryan Marganti <ryanmarganti@soulsizzle.com>",
+    "repository": "https://github.com/rmarganti/json-api/tree/master/packages/ts-json-api",
+    "license": "MIT",
+    "main": "dist/index.js",
+    "module": "dist/ts-json-api.esm.js",
+    "typings": "dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "dev": "tsdx watch",
+        "build": "tsdx build",
+        "test": "tsdx test --env=jsdom",
+        "lint": "tsdx lint",
+        "prepublish": "yarn build"
+    },
+    "peerDependencies": {},
+    "husky": {
+        "hooks": {
+            "pre-commit": "tsdx lint src && yarn test"
+        }
+    },
+    "jest": {
+        "moduleNameMapper": {
+            "^__mocks__(/?.*)": "<rootDir>/__mocks__/$1",
+            "^__tests__(/?.*)": "<rootDir>/__tests__/$1"
+        }
+    },
+    "dependencies": {
+        "ramda": "^0.26.1"
+    }
+}

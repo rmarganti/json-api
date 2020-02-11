@@ -1,0 +1,240 @@
+---
+name: Hooks
+route: /hooks
+---
+
+import Parameters from '../src/utils/Parameters.tsx';
+
+# Hooks
+
+Hooks are the easiest way to work with JasonAPI. They provide a means for initiating
+requests created by `jasonApiRequest()` and retriving the response.
+
+## useRequest()
+
+`useRequest()` is the primary hook for working with `jasonApiRequest()`-initiated requests. 
+It accepts two parameters: an options object and a dependency array. At the bare minimum,
+you options object should include the `action` property with the action to execute
+(created by `jasonApiRequest()`). The dependency list is an array of variables who, when changed,
+will cause your request to change. It will return a tuple containing info aboute the request and a
+callback to initiate the request.
+
+### Example
+
+```ts
+const SimpleComponent: React.FunctionComponent = () => {
+    const [explodeSunRequest, makeExplodeSunRequest] = useRequest(
+        // explodeSun() is an action created by `jasonApiRequest()` and defined elsewhere.
+        { action: explodeSun() } 
+    );
+
+    return (
+        <div>
+            {
+                explodeSunRequest.status === 'success' && 
+                    <pre>{JSON.stringify(explodeSunRequest.response)}</pre>
+            }
+
+            <button onClick={makeExplodeSunRequest}>Explode the Sun!</button>
+        </div>
+    );
+};
+```
+
+### Parameters
+
+<Parameters
+    parameters={[
+        {
+            name: 'requestOptions',
+            required: true,
+            description: 'An object containing all the options for your request. Described below.'
+        },
+        {
+            name: 'false',
+            required: true,
+            description: 'An array of all values from the Component scope that are used as part of the request.'
+        }
+    ]}
+/>
+
+### requestOptions Shape
+
+<Parameters
+    parameters={[
+        {
+            name: 'action',
+            required: true,
+            description: 'The `jasonApiRequest()` action to execute.'
+        },
+        {
+            name: 'cacheScheme',
+            required: false,
+            description: 'How requests should be cached.',
+            default: 'cacheFirst'
+        },
+        {
+            name: 'expandResourceObjects',
+            required: false,
+            description: `
+                By default, response data will only include the \`type\` and \`id\` of the
+                resource object. This helps in optimization. If you would like to include
+                the full response, set this to \`true\`.
+            `,
+            default: 'false'
+        },
+        {
+            name: 'onError',
+            required: false,
+            description: ''
+        },
+        {
+            name: 'onSuccess',
+            required: false,
+            description: ''
+        }
+    ]}
+/>
+
+### Response
+
+`useRequest` will return a tuple (a two-item array) containing (1) an object with info about the request
+and (2) a function to initiate the request. The request info object has the following properties.
+
+<Parameters
+    parameters={[
+        {
+            name: 'status',
+            description: "Either 'idle', 'loading', 'success', or 'error'."
+        },
+        {
+            name: 'error',
+            description: 'The error response body. Only present if `status` is \'error\'.',
+        },
+        {
+            name: 'response',
+            description: 'The successful response body. Only present if `status` is \'success\'.',
+        }
+    ]}
+/>
+
+## useAutoRequest()
+
+This is similar to `useRequest()`, but handles triggering the request automatically. This is useful,
+for example, for auto-triggering a request on component mount. The request can also be re-triggered
+when a dependency changes. 
+
+### Example
+
+
+```ts
+interface ArticlesListProps {
+    page: number;
+}
+
+const ArticlesList: React.FunctionComponent<ArticlesListProps> = ({ page }) => {
+    const [fetchArticlesRequest, refetchArticles] = useRequest(
+        // fetchArticles() is an action created by `jasonApiRequest()` and defined elsewhere.
+        { action: fetchArticles() } 
+    );
+
+    return (
+        <div>
+            {fetchArticlesRequest.status === 'success' && {
+                fetchArticles.response.data.map(
+                    article => <Article id={article.id} />
+                )
+            }}
+
+            <button onClick={refetchArticles}>Refetch Articles</button>
+        </div>
+    );
+};
+```
+
+## useItem()
+
+Pull a single JSON API resource object out of the Redux store.
+
+### Example
+
+```ts
+interface PersonResource extends ResourceObject {
+    type: 'people';
+    attributes: {
+        firstName: string;
+        lastName: string;
+    };
+}
+
+interface AuthorProps {
+    id: string;
+}
+
+const Author: React.SFC<AuthorProps> = ({ id }) => {
+    const author = useItem<PersonResource>('people', id);
+
+    if (!author) {
+        return null;
+    }
+
+    return (
+        <div>
+            {author.attributes.firstName} {author.attributes.lastName}
+        </Root>
+    );
+};
+```
+
+## useCollection()
+
+Pull a collection of Resource Objects out of the Redux store.
+
+### Parameters
+
+<Parameters
+    parameters={[
+        {
+            name: 'resourceType',
+            required: true,
+            description: 'The type of resource object. Comes for the `type` property from the API response.'
+        },
+        {
+            name: 'resourceIds',
+            required: false,
+            description: "An array of resource ID's to grab. Will grab all Resource Objects of the given type if ommitted."
+        },
+        {
+            name: 'expandResourceObjects',
+            required: false,
+            description: "Should the full data for the resource objects be returned? If `false`, only Resource Identifiers will be returned."
+        }
+    ]}
+/>
+
+
+### Example
+
+
+```ts
+interface ArticlesResource extends ResourceObject {
+    type: 'articles';
+    attributes: {
+        title: string;
+        content: string;
+    };
+}
+
+const Articles: React.SFC<AuthorProps> = () => {
+    const allArticles = useCollection<ArticlesResource>('articles');
+
+    return (
+        <div>
+            {articles.map(
+                article => <Article id={article.id} />
+            )}
+        </div>
+    );
+};
+```
+
