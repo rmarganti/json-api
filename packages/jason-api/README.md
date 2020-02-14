@@ -70,7 +70,7 @@ export const ArticlesList = () => {
             return <YourLoadingComponent />;
 
         case 'error':
-            return <YourErrorsComponent errors={request.response.errors} />;
+            return <YourErrorsComponent errors={request.error} />;
 
         case 'success':
             return (
