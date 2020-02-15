@@ -12,7 +12,7 @@
   ],
   "scripts": {
     "dev": "tsdx watch",
-    "build": "tsdx build",
+    "build": "tsdx build && yarn docs:build",
     "test": "tsdx test --env=jsdom",
     "lint": "tsdx lint",
     "prepublish": "yarn build",

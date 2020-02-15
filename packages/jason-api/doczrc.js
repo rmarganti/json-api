@@ -7,7 +7,9 @@ export default {
         'High Order Components',
         'Selectors',
         'Actions',
-        'Helpers'
+        'Helpers',
     ],
-    typescript: true
-}
+    typescript: true,
+    base: '/json-api/jason-api',
+    dest: '../../docs/jason-api',
+};

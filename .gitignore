@@ -1,3 +1,10 @@
-lerna-debug.log
+# Directories
+
+docs
 node_modules
+
+
+# Files
+
+lerna-debug.log
 yarn.lock
