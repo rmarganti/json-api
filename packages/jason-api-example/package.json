@@ -1,6 +1,6 @@
 {
   "name": "jason-api-example",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "index.js",
   "license": "MIT",
   "private": true,
@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
-    "jason-api": "^1.0.0",
+    "jason-api": "^1.0.1",
     "react-app-polyfill": "^1.0.0",
     "styled-components": "^4.3.2"
   },
