@@ -8,7 +8,7 @@
         "build": "lerna run build",
         "test": "lerna run test",
         "lint": "lerna run lint",
-        "publish": "lerna publish from-git --yes --npm-client yarn"
+        "publish": "lerna publish from-git --yes"
     },
     "workspaces": [
         "packages/*"

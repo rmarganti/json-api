@@ -6,9 +6,9 @@
     "useWorkspaces": true,
     "version": "independent",
     "command": {
-        "publish": {
+        "version": {
             "allowBranch": "master",
-            "message": "chore(release): publish %s"
+            "message": "chore(release): publish"
         }
     }
 }

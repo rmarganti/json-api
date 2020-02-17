@@ -20,7 +20,7 @@ before_deploy:
 deploy:
     - provider: script
       script: 
-          - yarn run lerna:publish
+          - yarn run publish
       skip_cleanup: true
       on:
           node: "12"
