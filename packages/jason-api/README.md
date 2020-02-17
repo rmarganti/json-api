@@ -5,6 +5,10 @@
 Consume and manipulate [JSON API standard](http://jsonapi.org/)
 data in Redux with scary ease.
 
+## Documentation
+
+The full documentation for JasonAPI can be [found here](https://rmarganti.github.io/json-api/jason-api/).
+
 ## Note
 
 All the following examples are written in Typescript in order to demonstrate
