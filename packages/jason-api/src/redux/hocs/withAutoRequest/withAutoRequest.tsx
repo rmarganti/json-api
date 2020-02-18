@@ -4,7 +4,7 @@ import * as React from 'react';
 
 // Internal dependencies
 import { CacheScheme, Subtract } from '../../../types/other';
-import { JasonApiRequestAction } from '../../actions/jasonApiRequest';
+import { JasonApiRequestAction } from '../../actions';
 import { useAutoRequest } from '../../hooks/useAutoRequest';
 import { UseRequestOptions, UseRequestResult } from '../../hooks/useRequest';
 
