@@ -8,7 +8,9 @@
         "build": "lerna run build",
         "test": "lerna run test",
         "lint": "lerna run lint",
-        "publish": "lerna publish from-git --yes"
+        "publish": "yarn run publish:docs && yarn run publish:packages",
+        "publish:docs": "gh-pages -d docs --repo https://$GH_TOKEN@github.com/rmarganti/json-api.git",
+        "publish:packages": "lerna publish from-git --yes"
     },
     "workspaces": [
         "packages/*"
@@ -27,6 +29,7 @@
         "docz": "^1.3.2",
         "docz-theme-default": "^1.2.0",
         "faker": "^4.1.0",
+        "gh-pages": "^2.2.0",
         "husky": "^3.0.7",
         "lerna": "^3.16.4",
         "parcel": "^1.12.3",
