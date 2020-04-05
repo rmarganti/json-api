@@ -49,6 +49,8 @@ const REQUEST_ERROR = 'REQUEST_ERROR';
 const reducer: Reducer<UseRequestState, UseRequestAction> = (state, action) => {
     switch (state.status) {
         case 'idle':
+        case 'success':
+        case 'error':
             switch (action.type) {
                 case REQUEST_MADE:
                     return {
@@ -63,6 +65,13 @@ const reducer: Reducer<UseRequestState, UseRequestAction> = (state, action) => {
 
         case 'loading':
             switch (action.type) {
+                case REQUEST_MADE:
+                    return {
+                        status: 'loading',
+                        error: null,
+                        response: state.response,
+                    } as LoadingState;
+
                 case REQUEST_SUCCESS:
                     return {
                         status: 'success',
@@ -81,31 +90,8 @@ const reducer: Reducer<UseRequestState, UseRequestAction> = (state, action) => {
                     return state;
             }
 
-        case 'success':
-            switch (action.type) {
-                case REQUEST_MADE:
-                    return {
-                        status: 'loading',
-                        error: null,
-                        response: state.response,
-                    };
-
-                default:
-                    return state;
-            }
-
-        case 'error':
-            switch (action.type) {
-                case REQUEST_MADE:
-                    return {
-                        status: 'loading',
-                        error: null,
-                        response: state.response,
-                    };
-
-                default:
-                    return state;
-            }
+        default:
+            return state;
     }
 };
 

@@ -120,4 +120,6 @@ Just a few additional features:
 
 - **Higher Order Components** - If hooks aren't your thing, JasonAPI provides
   Higher Order Components with all the same features.
--
+- **Auto-canceled Requests** - If the action payload changes or your component
+  unmounts, JasonAPI will cache the resource objects, but the response as a whole
+  will not be processed. No need worry about race conditions, etc.

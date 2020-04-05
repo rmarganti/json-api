@@ -1,5 +1,4 @@
 // External dependencies
-import { pick, values } from 'ramda';
 import * as React from 'react';
 
 // Internal dependencies
@@ -16,7 +15,6 @@ interface WithAutoRequestOptions<Data = any> {
     expandResourceObjects?: boolean;
     onError?: UseRequestOptions<Data>['onError'];
     onSuccess?: UseRequestOptions<Data>['onSuccess'];
-    propsToWatch?: string[];
 }
 
 export interface WithAutoRequestInjectedProps<Data = any> {
@@ -30,7 +28,6 @@ export const withAutoRequest = <Data extends any = any>({
     expandResourceObjects = false,
     onError,
     onSuccess,
-    propsToWatch = [],
 }: WithAutoRequestOptions<Data>) => <
     OriginalProps extends WithAutoRequestInjectedProps<Data>
 >(
@@ -43,18 +40,14 @@ export const withAutoRequest = <Data extends any = any>({
 
     const WithAutoRequest: React.FunctionComponent<ExternalProps> = externalProps => {
         const action = actionFactory(externalProps);
-        const watchedPropValues = values(pick(propsToWatch, externalProps));
 
-        const [request, refetch] = useAutoRequest<Data>(
-            {
-                action,
-                cacheScheme,
-                expandResourceObjects,
-                onSuccess,
-                onError,
-            },
-            watchedPropValues
-        );
+        const [request, refetch] = useAutoRequest<Data>({
+            action,
+            cacheScheme,
+            expandResourceObjects,
+            onSuccess,
+            onError,
+        });
 
         const passedProps = {
             ...externalProps,

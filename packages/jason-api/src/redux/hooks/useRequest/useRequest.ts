@@ -34,7 +34,7 @@
  */
 
 // External dependencies
-import { useCallback, DependencyList } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ResponseWithErrors } from 'ts-json-api';
 
@@ -61,21 +61,15 @@ export interface UseRequestOptions<Data> {
     onSuccess?: (response: ResponseShape<Data>) => void;
 }
 
-export type UseRequestResult<Data = any> = [
-    UseRequestState<Data>,
-    () => Promise<void>
-];
+export type UseRequestResult<Data = any> = [UseRequestState<Data>, () => void];
 
-export const useRequest = <Data = any>(
-    {
-        action,
-        cacheScheme = 'cacheFirst',
-        expandResourceObjects = false,
-        onError,
-        onSuccess,
-    }: UseRequestOptions<Data>,
-    deps: DependencyList = []
-): UseRequestResult<Data> => {
+export const useRequest = <Data = any>({
+    action,
+    cacheScheme = 'cacheFirst',
+    expandResourceObjects = false,
+    onError,
+    onSuccess,
+}: UseRequestOptions<Data>): UseRequestResult<Data> => {
     // Get cached response.
     const cacheKey = cacheKeyForRequestAction(action[JASON_API]);
 
@@ -89,47 +83,57 @@ export const useRequest = <Data = any>(
         cacheScheme === 'noCache' ? undefined : cachedResponse
     );
 
-    // Preform the fetch and keep track of loading states.
-    const fetch = useCallback(async () => {
-        // Do not fetch if a previous request is still loading.
-        if (cacheScheme === 'cacheOnly' || state.status === 'loading') {
+    useEffect(() => {
+        // We should not initiate a request in an invalid state,
+        // or if the cache sceheme is `cacheOnly`.
+        if (state.status !== 'loading' || cacheScheme === 'cacheOnly') {
             return;
         }
 
         // Do not initiate request if cache scheme is
         // `cacheOnce`, and we already have a cached response.
-        if (cacheScheme === 'cacheOnce' && cachedResponse) {
+        if (cacheScheme === 'cacheOnce' && state.response) {
             return;
         }
 
-        // Start loading.
-        actions.requestMade();
+        let canceled: boolean = false;
 
-        // Get the response.
-        try {
-            const successResponse = await dispatch(action);
+        dispatch(action)
+            .then(successResponse => {
+                if (canceled) {
+                    return;
+                }
 
-            // Store the success response.
-            actions.requestSuccess(successResponse);
+                // Store the success response.
+                actions.requestSuccess(successResponse);
 
-            // Trigger optional success callback.
-            if (onSuccess) {
-                onSuccess(successResponse);
-            }
-        } catch (e) {
-            // The middleware always throws errors
-            // as a valid JsonAPI error response.
-            const errorResponse = e as ResponseWithErrors;
+                // Trigger optional success callback.
+                if (onSuccess) {
+                    onSuccess(successResponse);
+                }
+            })
+            .catch(e => {
+                if (canceled) {
+                    return;
+                }
 
-            // Store error response.
-            actions.requestError(errorResponse);
+                // The middleware always throws errors
+                // as a valid JsonAPI error response.
+                const errorResponse = e as ResponseWithErrors;
 
-            // Trigger optional error callback.
-            if (onError) {
-                onError(errorResponse);
-            }
-        }
-    }, [state.status, cachedResponse, ...deepDependencyCheck(deps)]);
+                // Store error response.
+                actions.requestError(errorResponse);
 
-    return [state, fetch];
+                // Trigger optional error callback.
+                if (onError) {
+                    onError(errorResponse);
+                }
+            });
+
+        return () => {
+            canceled = true;
+        };
+    }, deepDependencyCheck([state.status, state.response, action]));
+
+    return [state, actions.requestMade];
 };

@@ -13,11 +13,9 @@ requests created by `jasonApiRequest()` and retriving the response.
 ## useRequest()
 
 `useRequest()` is the primary hook for working with `jasonApiRequest()`-initiated requests. 
-It accepts two parameters: an options object and a dependency array. At the bare minimum,
-you options object should include the `action` property with the action to execute
-(created by `jasonApiRequest()`). The dependency list is an array of variables who, when changed,
-will cause your request to change. It will return a tuple containing info aboute the request and a
-callback to initiate the request.
+It accepts a single parameter: an options object. At the bare minimum, your options object should
+include the `action` property with the action to execute (created by `jasonApiRequest()`). It will
+return a tuple containing info about the request and a callback to initiate the request.
 
 ### Example
 
@@ -50,11 +48,6 @@ const SimpleComponent: React.FunctionComponent = () => {
             required: true,
             description: 'An object containing all the options for your request. Described below.'
         },
-        {
-            name: 'false',
-            required: true,
-            description: 'An array of all values from the Component scope that are used as part of the request.'
-        }
     ]}
 />
 
@@ -86,12 +79,12 @@ const SimpleComponent: React.FunctionComponent = () => {
         {
             name: 'onError',
             required: false,
-            description: ''
+            description: 'A callback function that will receive the error response object when an error occurs.'
         },
         {
             name: 'onSuccess',
             required: false,
-            description: ''
+            description: 'A callback function that will receive the response body object upon a successful request.'
         }
     ]}
 />
@@ -109,11 +102,11 @@ and (2) a function to initiate the request. The request info object has the foll
         },
         {
             name: 'error',
-            description: 'The error response body. Only present if `status` is \'error\'.',
+            description: "The error response body. Only present if `status` is 'error'.",
         },
         {
             name: 'response',
-            description: 'The successful response body. Only present if `status` is \'success\'.',
+            description: "The successful response body. Only present if `status` is 'success'.",
         }
     ]}
 />
@@ -121,8 +114,8 @@ and (2) a function to initiate the request. The request info object has the foll
 ## useAutoRequest()
 
 This is similar to `useRequest()`, but handles triggering the request automatically. This is useful,
-for example, for auto-triggering a request on component mount. The request can also be re-triggered
-when a dependency changes. 
+for example, for auto-triggering a request on component mount. The request will also be re-triggered
+when the action changes. 
 
 ### Example
 

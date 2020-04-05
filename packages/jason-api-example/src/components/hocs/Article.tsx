@@ -86,5 +86,4 @@ const Root = styled.div`
 export default withAutoRequest({
     actionFactory: (props: ArticleProps) => getArticle(props.id),
     expandResourceObjects: true,
-    propsToWatch: ['id'],
 })(Article);

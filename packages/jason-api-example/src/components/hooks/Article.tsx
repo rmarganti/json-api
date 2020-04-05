@@ -18,13 +18,10 @@ interface ArticleProps {
 }
 
 const Article: React.FunctionComponent<ArticleProps> = ({ id }) => {
-    const [request, refetch] = useAutoRequest<ArticleResource>(
-        {
-            action: getArticle(id),
-            expandResourceObjects: true,
-        },
-        [id]
-    );
+    const [request, refetch] = useAutoRequest<ArticleResource>({
+        action: getArticle(id),
+        expandResourceObjects: true,
+    });
 
     const article = request.response && request.response.data;
     const isLoading = request.status === 'loading';
