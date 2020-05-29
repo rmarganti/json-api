@@ -6,7 +6,7 @@ import {
     over,
     propOr,
     reject,
-    set
+    set,
 } from 'ramda';
 
 import { ResourceObject } from '../../types';
