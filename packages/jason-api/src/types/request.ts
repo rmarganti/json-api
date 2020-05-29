@@ -37,9 +37,7 @@ interface SuccessCallback<
 }
 
 interface Transformer<DataOut = any> {
-    <ResponseIn extends any = ResponseShape<DataOut>>(
-        response: ResponseIn
-    ): ResponseShape<DataOut>;
+    (response: any): ResponseShape<DataOut>;
 }
 
 type SetRelationshipOnSuccess = [string, string, string, FlexiblePayload];
