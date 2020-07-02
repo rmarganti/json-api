@@ -8,7 +8,7 @@
         "build": "lerna run build",
         "test": "lerna run test",
         "lint": "lerna run lint",
-        "publish": "yarn run publish:docs && yarn run publish:packages",
+        "publish": "yarn run publish:packages && yarn run publish:docs",
         "publish:docs": "gh-pages -d docs --repo https://$GH_TOKEN@github.com/rmarganti/json-api.git",
         "publish:packages": "lerna publish from-git --yes --pre-dist-tag next"
     },
@@ -40,5 +40,6 @@
         "tsdx": "^0.12.3",
         "tslib": "^1.10.0",
         "typescript": "^3.6.3"
-    }
+    },
+    "version": "0.0.0"
 }
