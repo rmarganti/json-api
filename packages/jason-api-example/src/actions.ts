@@ -9,6 +9,9 @@ import { ArticleResource, CommentResource } from './types';
 export const getArticle = (articleId: string) =>
     jasonApiRequest<ArticleResource>({
         url: `/articles/${articleId}`,
+        onSuccess: () => {
+            // This callback shouldn't unnecessarily trigger re-fetches.
+        },
     });
 
 export const createArticle = (title: string) =>

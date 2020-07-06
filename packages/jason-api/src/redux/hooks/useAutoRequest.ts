@@ -31,7 +31,7 @@
 import { useEffect } from 'react';
 
 // Internal dependencies
-import { deepDependencyCheck } from '../../utils';
+import { deepDependencyCheck, toComparableAction } from '../../utils';
 import { useRequest, UseRequestOptions, UseRequestResult } from './useRequest';
 
 export const useAutoRequest = <Data = any>(
@@ -39,10 +39,13 @@ export const useAutoRequest = <Data = any>(
 ): UseRequestResult<Data> => {
     const [request, fetch] = useRequest<Data>(options);
 
+    // Used to check if the action has changed and should result in a re-fetch.
+    const comparableAction = toComparableAction(options.action);
+
     // Make the request
     useEffect(() => {
         fetch();
-    }, deepDependencyCheck([options.action]));
+    }, deepDependencyCheck([comparableAction]));
 
     return [request, fetch];
 };

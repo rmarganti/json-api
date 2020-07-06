@@ -43,7 +43,11 @@ import { CacheScheme } from '../../../types/other';
 import { JasonApiDispatch } from '../../../types/redux';
 import { ResponseShape } from '../../../types/request';
 import { StateWithJasonApi } from '../../../types/state';
-import { cacheKeyForRequestAction, deepDependencyCheck } from '../../../utils';
+import {
+    cacheKeyForRequestAction,
+    deepDependencyCheck,
+    toComparableAction,
+} from '../../../utils';
 import { JasonApiRequestAction, JASON_API } from '../../actions';
 import { getCachedQuery } from '../../selectors';
 import { useRequestMachine } from './useRequestMachine';
@@ -83,9 +87,12 @@ export const useRequest = <Data = any>({
         cacheScheme === 'noCache' ? undefined : cachedResponse
     );
 
+    // Used to check if the action has changed and should result in a re-fetch.
+    const comparableAction = toComparableAction(action);
+
     useEffect(() => {
         // We should not initiate a request in an invalid state,
-        // or if the cache sceheme is `cacheOnly`.
+        // or if the cache scheme is `cacheOnly`.
         if (state.status !== 'loading' || cacheScheme === 'cacheOnly') {
             return;
         }
@@ -133,7 +140,7 @@ export const useRequest = <Data = any>({
         return () => {
             canceled = true;
         };
-    }, deepDependencyCheck([state.status, state.response, action]));
+    }, deepDependencyCheck([state.status, state.response, comparableAction]));
 
     return [state, actions.requestMade];
 };

@@ -14,6 +14,9 @@ import { mockAxios } from '__tests__/tools';
 const mockAction = (articleId: string) =>
     jasonApiRequest<ArticleResource>({
         url: `/api/articles/${articleId}`,
+        onSuccess: () => {
+            // This callback shouldn't trigger re-fetches.
+        },
     });
 
 mockAxios.onGet('/api/articles/autoRequest').replyOnce(200, articleResponse);
