@@ -22,8 +22,20 @@ export type FunctionType = (...args: any[]) => any;
 
 export type ActionCreatorsMapObject = { [actionCreator: string]: FunctionType };
 
+export type ActionsMap<A extends ActionCreatorsMapObject> = {
+    [K in keyof A]: ReturnType<A[K]>;
+};
+
 export type ActionsUnion<A extends ActionCreatorsMapObject> = ReturnType<
     A[keyof A]
 >;
 
 export type CacheScheme = 'cacheFirst' | 'cacheOnce' | 'cacheOnly' | 'noCache';
+
+/**
+ * When should JasonAPI `useRequest()` and `useAutoRequest()` hooks query the cache?
+ *
+ * `onMount` - Only query the cache when the Component mounts.
+ * `onActionChange` - Query the cache on Component mount and any time the action shape changes.
+ */
+export type CacheQueryTiming = 'onMount' | 'onActionChange';

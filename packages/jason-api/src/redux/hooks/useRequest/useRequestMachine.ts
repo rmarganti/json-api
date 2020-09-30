@@ -1,6 +1,7 @@
-import { Reducer, useReducer, useCallback } from 'react';
+import { Reducer } from 'react';
 import { ResponseWithErrors } from 'ts-json-api';
 
+import { ActionsMap, ActionsUnion } from '../../../types/other';
 import { ResponseShape } from '../../../types/request';
 import { createAction } from '../../../utils';
 import {
@@ -11,40 +12,20 @@ import {
     UseRequestActions,
     UseRequestState,
 } from './types';
+import { useReducerWithActions } from '../useReducerWithActions';
 
 /**
  * Creates a state machine that tracks the status and result of an API request.
  */
 export const useRequestMachine = <Data = any>(
     cachedResponse?: ResponseShape<Data>
-): [UseRequestState<Data>, UseRequestActions<Data>] => {
-    const [state, dispatch] = useReducer(reducer, cachedResponse, init);
-
-    const onRequestMade = useCallback(() => dispatch(requestMade()), []);
-
-    const onRequestSuccess = useCallback(
-        (response: ResponseShape<Data>) => dispatch(requestSuccess(response)),
-        []
-    );
-
-    const onRequestError = useCallback(
-        (response: ResponseWithErrors) => dispatch(requestError(response)),
-        []
-    );
-
-    return [
-        state,
-        {
-            requestError: onRequestError,
-            requestMade: onRequestMade,
-            requestSuccess: onRequestSuccess,
-        },
-    ];
-};
+): [UseRequestState<Data>, UseRequestActions<Data>] =>
+    useReducerWithActions(reducer, actions, cachedResponse, init);
 
 const REQUEST_MADE = 'REQUEST_MADE';
 const REQUEST_SUCCESS = 'REQUEST_SUCCESS';
 const REQUEST_ERROR = 'REQUEST_ERROR';
+const CACHE_CHANGED = 'CACHE_CHANGED';
 
 const reducer: Reducer<UseRequestState, UseRequestAction> = (state, action) => {
     switch (state.status) {
@@ -58,6 +39,9 @@ const reducer: Reducer<UseRequestState, UseRequestAction> = (state, action) => {
                         error: null,
                         response: state.response,
                     } as LoadingState;
+
+                case CACHE_CHANGED:
+                    return handleCacheChange(state, action);
 
                 default:
                     return state;
@@ -86,6 +70,9 @@ const reducer: Reducer<UseRequestState, UseRequestAction> = (state, action) => {
                         response: state.response,
                     } as ErrorState;
 
+                case CACHE_CHANGED:
+                    return handleCacheChange(state, action);
+
                 default:
                     return state;
             }
@@ -95,6 +82,17 @@ const reducer: Reducer<UseRequestState, UseRequestAction> = (state, action) => {
     }
 };
 
+const handleCacheChange = (
+    state: UseRequestState,
+    action: UseRequestActionMap['cacheChanged']
+) =>
+    action.payload === state.response
+        ? state
+        : {
+              ...state,
+              response: action.payload,
+          };
+
 const init = <Data = any>(
     cachedResponse?: ResponseShape<Data>
 ): IdleState<Data> => ({
@@ -103,15 +101,16 @@ const init = <Data = any>(
     response: cachedResponse || null,
 });
 
-const requestMade = () => createAction(REQUEST_MADE);
-type RequestMade = ReturnType<typeof requestMade>;
+const actions = {
+    requestMade: () => createAction(REQUEST_MADE),
+    requestSuccess: <Data = any>(response: ResponseShape<Data>) =>
+        createAction(REQUEST_SUCCESS, response),
+    requestError: (response: ResponseWithErrors) =>
+        createAction(REQUEST_ERROR, response),
+    cacheChanged: <Data = any>(cachedResponse?: ResponseShape<Data>) =>
+        createAction(CACHE_CHANGED, cachedResponse),
+};
 
-const requestSuccess = <Data = any>(response: ResponseShape<Data>) =>
-    createAction(REQUEST_SUCCESS, response);
-type RequestSuccess = ReturnType<typeof requestSuccess>;
+type UseRequestActionMap = ActionsMap<typeof actions>;
 
-const requestError = (response: ResponseWithErrors) =>
-    createAction(REQUEST_ERROR, response);
-type RequestError = ReturnType<typeof requestError>;
-
-type UseRequestAction = RequestMade | RequestSuccess | RequestError;
+type UseRequestAction = ActionsUnion<typeof actions>;

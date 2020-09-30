@@ -39,6 +39,7 @@ export interface ErrorState<Data = any> extends BaseState<Data> {
 }
 
 export interface UseRequestActions<Data = any> {
+    cacheChanged: (cachedResponse?: ResponseShape<Data>) => void;
     requestError: (response: ResponseWithErrors) => void;
     requestMade: () => void;
     requestSuccess: (response: ResponseShape<Data>) => void;

@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import HooksOrHocsToggle from './components/common/HooksOrHocsToggle';
-import HocsArticle from './components/hocs/Article';
+/* import HocsArticle from './components/hocs/Article'; */
 import HooksArticle from './components/hooks/Article';
 import { useToggle } from './hooks';
 
@@ -15,7 +15,7 @@ const App: React.FunctionComponent = () => {
                 toggleShowHooks={toggleShowHooks}
             />
 
-            {showHooks ? <HooksArticle id="123" /> : <HocsArticle id="123" />}
+            {showHooks ? <HooksArticle id="123" /> : <HooksArticle id="456" />}
         </>
     );
 };

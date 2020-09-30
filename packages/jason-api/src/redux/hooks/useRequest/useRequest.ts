@@ -39,7 +39,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ResponseWithErrors } from 'ts-json-api';
 
 // Internal dependencies
-import { CacheScheme } from '../../../types/other';
+import { CacheQueryTiming, CacheScheme } from '../../../types/other';
 import { JasonApiDispatch } from '../../../types/redux';
 import { ResponseShape } from '../../../types/request';
 import { StateWithJasonApi } from '../../../types/state';
@@ -60,6 +60,7 @@ import { UseRequestState } from './types';
 export interface UseRequestOptions<Data> {
     action: JasonApiRequestAction<Data>;
     cacheScheme?: CacheScheme;
+    queryCache?: CacheQueryTiming;
     expandResourceObjects?: boolean;
     onError?: (response: ResponseWithErrors) => void;
     onSuccess?: (response: ResponseShape<Data>) => void;
@@ -70,6 +71,7 @@ export type UseRequestResult<Data = any> = [UseRequestState<Data>, () => void];
 export const useRequest = <Data = any>({
     action,
     cacheScheme = 'cacheFirst',
+    queryCache = 'onMount',
     expandResourceObjects = false,
     onError,
     onSuccess,
@@ -87,9 +89,19 @@ export const useRequest = <Data = any>({
         cacheScheme === 'noCache' ? undefined : cachedResponse
     );
 
+    const haveResponse = !!state.response;
+
     // Used to check if the action has changed and should result in a re-fetch.
     const comparableAction = toComparableAction(action);
 
+    // Update internal response state when the cache key changes.
+    useEffect(() => {
+        if (queryCache === 'onActionChange' && cacheScheme !== 'noCache') {
+            actions.cacheChanged(cachedResponse);
+        }
+    }, [cacheKey]);
+
+    // Initial request.
     useEffect(() => {
         // We should not initiate a request in an invalid state,
         // or if the cache scheme is `cacheOnly`.
@@ -99,7 +111,7 @@ export const useRequest = <Data = any>({
 
         // Do not initiate request if cache scheme is
         // `cacheOnce`, and we already have a cached response.
-        if (cacheScheme === 'cacheOnce' && state.response) {
+        if (cacheScheme === 'cacheOnce' && haveResponse) {
             return;
         }
 
@@ -140,7 +152,7 @@ export const useRequest = <Data = any>({
         return () => {
             canceled = true;
         };
-    }, deepDependencyCheck([state.status, state.response, comparableAction]));
+    }, deepDependencyCheck([comparableAction, haveResponse, state.status]));
 
     return [state, actions.requestMade];
 };

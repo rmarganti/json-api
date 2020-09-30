@@ -21,6 +21,7 @@ const Article: React.FunctionComponent<ArticleProps> = ({ id }) => {
     const [request, refetch] = useAutoRequest<ArticleResource>({
         action: getArticle(id),
         expandResourceObjects: true,
+        queryCache: 'onActionChange',
     });
 
     const article = request.response && request.response.data;

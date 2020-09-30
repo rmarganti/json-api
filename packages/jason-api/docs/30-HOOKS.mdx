@@ -33,7 +33,12 @@ const SimpleComponent: React.FunctionComponent = () => {
                     <pre>{JSON.stringify(explodeSunRequest.response)}</pre>
             }
 
-            <button onClick={makeExplodeSunRequest}>Explode the Sun!</button>
+            <button
+                onClick={makeExplodeSunRequest}
+                disabled={explodeSunRequest.status === 'loading'}
+            >
+                    Explode the Sun!
+            </button>
         </div>
     );
 };
@@ -65,6 +70,12 @@ const SimpleComponent: React.FunctionComponent = () => {
             required: false,
             description: 'How requests should be cached.',
             default: 'cacheFirst'
+        },
+        {
+            name: 'queryCache',
+            required: false,
+            description: 'When should the cache be queried?',
+            default: 'onMount'
         },
         {
             name: 'expandResourceObjects',
@@ -118,7 +129,6 @@ for example, for auto-triggering a request on component mount. The request will 
 when the action changes. 
 
 ### Example
-
 
 ```ts
 interface ArticlesListProps {
