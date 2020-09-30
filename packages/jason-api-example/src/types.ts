@@ -8,8 +8,8 @@ export interface ArticleResource extends ResourceObject {
         body: string;
     };
     relationships: {
-        author: Relationship<PersonResource>;
-        comments: Relationship<CommentResource[]>;
+        author: RelationshipWithData<PersonResource>;
+        comments: RelationshipWithData<CommentResource[]>;
     };
 }
 
@@ -19,7 +19,7 @@ export interface CommentResource extends ResourceObject {
         body: string;
     };
     relationships: {
-        author: Relationship<PersonResource>;
+        author: RelationshipWithData<PersonResource>;
     };
 }
 
@@ -31,3 +31,14 @@ export interface PersonResource extends ResourceObject {
         twitter: string;
     };
 }
+
+type RelationshipWithData<
+    D extends ResourceObject | ResourceObject[] =
+        | ResourceObject
+        | ResourceObject[]
+> = WithKnownProperties<Relationship<D>, 'data'>;
+
+type WithKnownProperties<T extends {}, K extends keyof T> = Required<
+    Pick<T, K>
+> &
+    Omit<T, K>;
