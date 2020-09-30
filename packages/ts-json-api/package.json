@@ -11,10 +11,10 @@
         "dist"
     ],
     "scripts": {
-        "dev": "tsdx watch",
-        "build": "tsdx build",
-        "test": "tsdx test --env=jsdom",
-        "lint": "tsdx lint",
+        "dev": "yarn tsdx watch",
+        "build": "yarn tsdx build",
+        "test": "yarn tsdx test --env=jsdom",
+        "lint": "yarn tsdx lint",
         "prepublish": "yarn build"
     },
     "husky": {

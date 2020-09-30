@@ -16,7 +16,7 @@ export const buildResourceObject = (
 ) => ({
     attributes,
     id,
-    type
+    type,
 });
 
 /**
