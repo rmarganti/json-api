@@ -31,7 +31,7 @@
         }
     },
     "dependencies": {
-        "axios": "^0.18.0",
+        "axios": "^0.21.1",
         "pluralize": "^8.0.0",
         "ramda": "^0.26.1",
         "ts-json-api": "^1.1.0"
