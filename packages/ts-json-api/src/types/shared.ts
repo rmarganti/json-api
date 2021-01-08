@@ -10,7 +10,7 @@ export interface Links {
  */
 export interface LinkObject {
     href: string;
-    meta: Meta;
+    meta?: Meta;
 }
 
 /**
