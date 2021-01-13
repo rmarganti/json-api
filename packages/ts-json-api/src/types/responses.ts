@@ -1,5 +1,5 @@
 import { ResourceObject, ResourceObjectOrObjects } from './resourceObjects';
-import { Links, Meta } from './shared';
+import { Links, Meta, TopLevelLinks } from './shared';
 
 /**
  * A Response for sure containing data.
@@ -9,7 +9,7 @@ export interface ResponseWithData<
 > {
     data: D;
     included?: ResourceObject[];
-    links?: Links;
+    links?: TopLevelLinks;
     errors?: Error[];
     meta?: Meta;
 }
@@ -22,7 +22,7 @@ export interface ResponseWithErrors<
 > {
     data?: D;
     included?: ResourceObject[];
-    links?: Links;
+    links?: TopLevelLinks;
     errors: Error[];
     meta?: Meta;
 }
@@ -35,7 +35,7 @@ export interface ResponseWithMetaData<
 > {
     data?: D;
     included?: ResourceObject[];
-    links?: Links;
+    links?: TopLevelLinks;
     errors?: Error[];
     meta: Meta;
 }
@@ -48,7 +48,7 @@ export interface Response<
 > {
     data?: D;
     included?: ResourceObject[];
-    links?: Links;
+    links?: TopLevelLinks;
     errors?: Error[];
     meta?: Meta;
 }

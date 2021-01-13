@@ -1,5 +1,5 @@
 import { NewResourceObject, ResourceObject } from './resourceObjects';
-import { Links, Meta } from './shared';
+import { Meta, TopLevelLinks } from './shared';
 
 /**
  * A Request to be sent to a JSON API-compliant server.
@@ -11,7 +11,7 @@ export interface Request<
 > {
     data: D;
     included?: ResourceObject[];
-    links?: Links;
+    links?: TopLevelLinks;
     errors?: [Error];
     meta?: Meta;
 }
