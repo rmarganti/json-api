@@ -15,7 +15,7 @@
         "build": "yarn tsdx build && yarn docs:build",
         "test": "yarn tsdx test --env=jsdom",
         "lint": "yarn tsdx lint",
-        "prepublish": "yarn yarn build",
+        "prepublish": "yarn build",
         "docs:dev": "yarn docz dev",
         "docs:build": "yarn docz build"
     },
