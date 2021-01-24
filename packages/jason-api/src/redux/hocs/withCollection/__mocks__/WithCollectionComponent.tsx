@@ -11,9 +11,9 @@ type WithCollectionComponentProps = WithCollectionInjectedProps<
     CommentResource
 >;
 
-const WithCollectionComponent: React.FunctionComponent<
-    WithCollectionComponentProps
-> = ({ data }) =>
+const WithCollectionComponent: React.FunctionComponent<WithCollectionComponentProps> = ({
+    data,
+}) =>
     data ? (
         <div>
             {data.map(comment => (

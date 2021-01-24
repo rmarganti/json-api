@@ -32,9 +32,7 @@ export const withCollection = <Data extends ResourceObject = ResourceObject>({
     type ExternalProps = Subtract<OriginalProps, WithCollectionInjectedProps> &
         WithCollectionOwnProps;
 
-    const WithCollection: React.FunctionComponent<
-        ExternalProps
-    > = externalProps => {
+    const WithCollection: React.FunctionComponent<ExternalProps> = externalProps => {
         const { ids, ...rest } = externalProps;
         const resolvedIds = ids || resourceIds;
 

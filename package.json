@@ -4,14 +4,14 @@
     "description": "A monorepo for Javascript JSON:API utility packages.",
     "repository": "https://github.com/rmarganti/json-api",
     "scripts": {
-        "dev": "yarn lerna run --parallel dev",
-        "build": "yarn lerna run build",
-        "test": "yarn lerna run test",
-        "lint": "yarn lerna run lint",
-        "prepare-release": "yarn lerna version",
+        "dev": "lerna run --parallel dev",
+        "build": "lerna run build",
+        "test": "lerna run test",
+        "lint": "lerna run lint",
+        "prepare-release": "lerna version",
         "publish-release": "yarn run publish:packages && yarn run publish:docs",
-        "publish:docs": "yarn gh-pages -d docs --repo https://$GH_TOKEN@github.com/rmarganti/json-api.git",
-        "publish:packages": "yarn lerna publish from-git --ignore-scripts --yes --pre-dist-tag next"
+        "publish:docs": "gh-pages -d docs --repo https://$GH_TOKEN@github.com/rmarganti/json-api.git",
+        "publish:packages": "lerna publish from-git --ignore-scripts --yes --pre-dist-tag next"
     },
     "workspaces": [
         "packages/*"
