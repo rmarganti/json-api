@@ -8,7 +8,7 @@
         "build": "lerna run build",
         "test": "lerna run test",
         "lint": "lerna run lint",
-        "prepare-release": "lerna version",
+        "prepare-release": "yarn build && lerna version",
         "publish-release": "yarn run publish:packages && yarn run publish:docs",
         "publish:docs": "gh-pages -d docs --repo https://$GH_TOKEN@github.com/rmarganti/json-api.git",
         "publish:packages": "lerna publish from-git --ignore-scripts --yes --pre-dist-tag next"

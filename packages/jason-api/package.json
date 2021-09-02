@@ -40,5 +40,6 @@
         "react": ">=16.8.0",
         "react-redux": ">=7.1.0",
         "redux": ">=4.0.0"
-    }
+    },
+    "gitHead": "08c9fb93ea4b648d8fc92503c9789687be0a33fc"
 }
