@@ -6,6 +6,7 @@ import {
     ResponseWithErrors,
 } from 'ts-json-api';
 
+import { JSONAPIError } from '../JSONAPIError';
 import { JasonApiMiddleware, JasonApiMiddlewareApi } from '../types/redux';
 import { RequestConfig } from '../types/request';
 import {
@@ -138,7 +139,9 @@ class JsonApiMiddleware {
                 }
             }
 
-            throw errorJson;
+            if (!this.requestConfig.suppressError) {
+                throw new JSONAPIError(error.message, errorJson);
+            }
         }
     }
 

@@ -7,13 +7,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
+- Added `suppressError` option to request config.
+
+### Changed
+- In event of an API error, the middleware throws a JSONAPIError instead of a plain object.
+
+## [1.2.1] - 2021-01-21
+### Added
 - Add `queryCache` option to control when `useRequest()`
   and `useAutoRequest()` query the cache.
 
 ### Changed
 - Updated axios dependency.
 
-## [1.1.1]
+## [1.1.1] - 2020-07-06
 ### Changed
 - Dependency list is no longer need for hooks, and `propsToWatch`
   is no longer necessary for High Order Components.

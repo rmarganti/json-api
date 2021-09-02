@@ -63,6 +63,7 @@ export interface RequestConfig<
     additionalHeaders?: AdditionalHeaders;
     disableStartLoadingActionCreator?: boolean;
     displayNotificationOnError?: boolean;
+    suppressError?: boolean;
     onError?: ErrorCallback<Dispatch, State>;
     onSuccess?: SuccessCallback<Data, Dispatch, State>;
     transformer?: Transformer<Data>;
