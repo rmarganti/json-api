@@ -47,7 +47,7 @@ export interface NewResourceObject {
  * Attributes describing a Resource Object
  */
 export interface Attributes {
-    [index: string]: string | number | boolean | object | undefined;
+    [index: string]: string | number | boolean | object | undefined | null;
 }
 
 /**
