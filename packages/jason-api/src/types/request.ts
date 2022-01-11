@@ -40,9 +40,9 @@ interface Transformer<DataOut = any> {
     (response: any): ResponseShape<DataOut>;
 }
 
-type SetRelationshipOnSuccess = [string, string, string, FlexiblePayload];
+type SetRelationshipOnSuccess = [string, string, string, FlexiblePayload | null | undefined];
 
-type AddRelationshipOnSuccess = [string, string, string, FlexiblePayload];
+type AddRelationshipOnSuccess = [string, string, string, FlexiblePayload | null | undefined];
 
 type RemoveRelationshipOnSuccess = [string, string, string, string];
 type RemoveResourceObjectOnSuccess = [string, string];
