@@ -18,27 +18,29 @@ of additional, helpful options; so be sure to check the WIKI.
 ```ts
 import { jasonApiRequest } from 'jason-api';
 
-const getUser = userId => jasonApiRequest({
-    url: `/api/users/${userId}`,
-    resourceType: 'users',
-    resourceId: userId,
-});
+const getUser = userId =>
+    jasonApiRequest({
+        url: `/api/users/${userId}`,
+        resourceType: 'users',
+        resourceId: userId,
+    });
 
 /**
  * NOTE: Since our payload contains the `type` and `id`, we can
  * choose to skip including those options like we did above.
  */
-const updateUser = (userId, attributes) => jasonApiRequest({
-    url: `/api/users/${userId}`,
-    method: 'post',
-    payload: {
-        data: {
-            type: 'users',
-            id: userId,
-            attributes,
-        }
-    },
-});
+const updateUser = (userId, attributes) =>
+    jasonApiRequest({
+        url: `/api/users/${userId}`,
+        method: 'post',
+        payload: {
+            data: {
+                type: 'users',
+                id: userId,
+                attributes,
+            },
+        },
+    });
 
 // JASON_API_REQUEST action creators return a Promise when dispatched.
 dispatch(getUser('12345')).then(response =>
@@ -57,9 +59,10 @@ The `jasonApiRequest()` action creator triggers an api call. A basic get request
 ```ts
 import { jasonApiRequest } from 'jason-api';
 
-const fetchBook = id => jasonApiRequest({
-    url: `/api/books/${id}`,
-});
+const fetchBook = id =>
+    jasonApiRequest({
+        url: `/api/books/${id}`,
+    });
 ```
 
 There are plenty of other options, however, for customizing your requests with minimal code.
@@ -103,15 +106,17 @@ There are plenty of other options, however, for customizing your requests with m
     // a non-200 response. If this is set to `true`, that error will not be thrown.
     suppressError: <BOOLEAN>,
 
-    // Set a relationship or relationships on success. Accepts an ID or
-    // Array of ID's. If relationshipId is not provided, it will use the
-    // JSON response. Will completely replace existing relationship(s).
-    setRelationshipOnSuccess: [entityType, entityId, relationshipType, relationshipId],
+    // Set a relationship or relationships on success. Accepts an Resource Identifier
+    // (object with `type` and `id`), array of Resource Identifiers, or a JSON API Response).
+    // If the last options is omitted, it will use the JSON response. Will completely
+    // replace existing relationship(s).
+    setRelationshipOnSuccess: [entityType, entityId, relationshipType, resourceIdentifier(s)/response],
 
-    // Add a relationship on success. Ideal for one-to-many/many-to-many
-    // relationships. If relationshipId is not provided, it will use the
-    // JSON response. New relationships are appended to existing ones.
-    addRelationshipOnSuccess: [entityType, entityId, relationshipType, relationshipId],
+    // Add a relationship or relationships on success. Accepts an Resource Identifier
+    // (object with `type` and `id`), array of Resource Identifiers, or a JSON API Response).
+    // If the last options is omitted, it will use the JSON response. Will completely
+    // replace existing relationship(s).
+    addRelationshipOnSuccess: [entityType, entityId, relationshipType, resourceIdentifier(s)/response],
 
     // Remove a relationship on success. Ideal for one-to-many relationships.
     removeRelationshipOnSuccess: [entityType, entityId, relationshipType, relationshipId],
