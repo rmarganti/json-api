@@ -1,24 +1,33 @@
 # ts-json-api
 
-A collection of TypeScript interfaces and classes for working with [JSONAPI.org](http://jsonapi.org/)-standard requests/responses.
+A collection of TypeScript interfaces and classes for working with
+[JSONAPI.org](http://jsonapi.org/)-standard requests/responses.
 
 ## Interfaces
 
-There library supports JSONAPI standard in all its variations. Therefore, there are a number of interfaces you may find useful.
+There library supports JSONAPI standard in all its variations. Therefore, there
+are a number of interfaces you may find useful.
 
 ### Response
 
-This is the main interface. It works with any acceptable combination of `ResponseWithData`, `ResponseWithErrors`, & `ResponseWithMeta`. If you need to target specifc response types, it is recommend you use those more specific interfaces (covered below).
+This is the main interface. It works with any acceptable combination of
+`ResponseWithData`, `ResponseWithErrors`, & `ResponseWithMeta`. If you need to
+target specifc response types, it is recommend you use those more specific
+interfaces (covered below).
 
 See also: `ResponseWithData`, `ResponseWithErrors`, and `ResponseWithMeta`.
 
 ### ResourceObject
 
-This represents a single ResourceObject in a JSONAPI response. See also: `ResourceObjects` and `ResourceObjectOrObjects`.
+This represents a single ResourceObject in a JSONAPI response. See also:
+`ResourceObjects` and `ResourceObjectOrObjects`.
 
 ### Other interfaces
 
-Due to JSONAPI's nested structure, it is constructed of a decent number of individual pieces. We recommend taking a look at `src/structure.ts` for reference. Should you need to target more specific pieces of a response, it should be pretty self-explanitory.
+Due to JSONAPI's nested structure, it is constructed of a decent number of
+individual pieces. We recommend taking a look at [src/types/index.ts](./src/types/index.ts) for
+reference. Should you need to target more specific pieces of a response, it
+should be pretty self-explanitory.
 
 ### Example Interface usage
 
@@ -164,4 +173,6 @@ article.withoutRelationships().toJSON()
 
 ## Utility Functions
 
-This package exposes all of its useful utility functions. Documentation is coming, but feel free to browse around `src/fp`. All functions are curried for all you functional programming geeks.
+This package exposes all of its useful utility functions. Documentation is
+coming, but feel free to browse around `src/fp`. All functions are curried for
+all you functional programming geeks.
