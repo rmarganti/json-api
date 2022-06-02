@@ -3,7 +3,7 @@ import { ResourceObjectOrObjects, ResponseWithData } from 'ts-json-api';
 /**
  * From `T` remove properties that exist in `T1` (`T1` is a subtype of `T`).
  *
- * ```ts
+ * ```typescript
  * type A = { one: string; two: string; three: string; };
  * type B = { two: string; three: string; };
  *

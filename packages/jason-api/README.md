@@ -17,7 +17,7 @@ Javascript specific examples are incoming.
 
 ## Hooking up the reducer and middleware
 
-```ts
+```typescript
 import {
     // JasonAPI expects its reducer to be named `jasonAPI`
     reducer as jasonApi,
@@ -39,7 +39,7 @@ pieces play together. With just a little bit of code, you get JSON API-compliant
 api calls, caching, loading status management, error-handling, and efficient
 React renders.
 
-```tsx
+```typescript
 import * as React from 'react';
 import { jasonApiRequest, useAutoRequest, useItem } from 'jason-api';
 import { ResourceObject } from 'ts-json-api';

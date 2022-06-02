@@ -1,105 +1,169 @@
-import { Reducer } from 'react';
+import { Reducer, useRef } from 'react';
 import { ResponseWithErrors } from 'ts-json-api';
 
-import { ActionsMap, ActionsUnion } from '../../../types/other';
+import { ActionsMap, ActionsUnion, CacheScheme } from '../../../types/other';
 import { ResponseShape } from '../../../types/request';
 import { createAction } from '../../../utils';
-import {
-    ErrorState,
-    IdleState,
-    LoadingState,
-    SuccessState,
-    UseRequestActions,
-    UseRequestState,
-} from './types';
+import { UseRequestActions, UseRequestState } from './types';
 import { useReducerWithActions } from '../useReducerWithActions';
+
+interface UseRequestMachineOptions<Data> {
+    cachedResponse?: ResponseShape<Data>;
+    cacheScheme: CacheScheme;
+}
 
 /**
  * Creates a state machine that tracks the status and result of an API request.
  */
-export const useRequestMachine = <Data = any>(
-    cachedResponse?: ResponseShape<Data>
-): [UseRequestState<Data>, UseRequestActions<Data>] =>
-    useReducerWithActions(reducer, actions, cachedResponse, init);
+export function useRequestMachine<Data = any>({
+    cachedResponse,
+    cacheScheme,
+}: UseRequestMachineOptions<Data>): [
+    UseRequestState<Data>,
+    UseRequestActions<Data>
+] {
+    const reducer = useRef(createReducer({ cacheScheme }));
+
+    return useReducerWithActions(
+        reducer.current,
+        actions,
+        cachedResponse,
+        createInitializer(cacheScheme)
+    );
+}
 
 const REQUEST_MADE = 'REQUEST_MADE';
 const REQUEST_SUCCESS = 'REQUEST_SUCCESS';
 const REQUEST_ERROR = 'REQUEST_ERROR';
 const CACHE_CHANGED = 'CACHE_CHANGED';
 
-const reducer: Reducer<UseRequestState, UseRequestAction> = (state, action) => {
-    switch (state.status) {
-        case 'idle':
-        case 'success':
-        case 'error':
-            switch (action.type) {
-                case REQUEST_MADE:
-                    return {
-                        status: 'loading',
-                        error: null,
-                        response: state.response,
-                    } as LoadingState;
+interface CreateReducerOptions {
+    cacheScheme: CacheScheme;
+}
 
-                case CACHE_CHANGED:
-                    return handleCacheChange(state, action);
+function createReducer({
+    cacheScheme,
+}: CreateReducerOptions): Reducer<UseRequestState, UseRequestAction> {
+    return (state, action) => {
+        switch (state.status) {
+            case 'idle':
+            case 'success':
+            case 'error':
+                switch (action.type) {
+                    case REQUEST_MADE:
+                        return {
+                            status: 'loading',
+                            error: null,
+                            response: state.response,
+                        };
 
-                default:
-                    return state;
-            }
+                    case CACHE_CHANGED:
+                        return handleCacheChange({
+                            state,
+                            action,
+                            cacheScheme,
+                        });
 
-        case 'loading':
-            switch (action.type) {
-                case REQUEST_MADE:
-                    return {
-                        status: 'loading',
-                        error: null,
-                        response: state.response,
-                    } as LoadingState;
+                    default:
+                        return state;
+                }
 
-                case REQUEST_SUCCESS:
-                    return {
-                        status: 'success',
-                        error: null,
-                        response: action.payload,
-                    } as SuccessState;
+            case 'loading':
+                switch (action.type) {
+                    case REQUEST_MADE:
+                        return {
+                            status: 'loading',
+                            error: null,
+                            response: state.response,
+                        };
 
-                case REQUEST_ERROR:
-                    return {
-                        status: 'error',
-                        error: action.payload,
-                        response: state.response,
-                    } as ErrorState;
+                    case REQUEST_SUCCESS:
+                        return {
+                            status: 'success',
+                            error: null,
+                            response: action.payload,
+                        };
 
-                case CACHE_CHANGED:
-                    return handleCacheChange(state, action);
+                    case REQUEST_ERROR:
+                        return {
+                            status: 'error',
+                            error: action.payload,
+                            response: state.response,
+                        };
 
-                default:
-                    return state;
-            }
+                    case CACHE_CHANGED:
+                        return handleCacheChange({
+                            state,
+                            action,
+                            cacheScheme,
+                        });
 
-        default:
-            return state;
+                    default:
+                        return state;
+                }
+
+            default:
+                return state;
+        }
+    };
+}
+
+interface HandleCacheChangeOptions {
+    cacheScheme: CacheScheme;
+    state: UseRequestState;
+    action: UseRequestActionMap['cacheChanged'];
+}
+
+function handleCacheChange({
+    state,
+    action,
+    cacheScheme,
+}: HandleCacheChangeOptions): UseRequestState {
+    if (action.payload === state.response) {
+        return state;
     }
-};
 
-const handleCacheChange = (
-    state: UseRequestState,
-    action: UseRequestActionMap['cacheChanged']
-) =>
-    action.payload === state.response
-        ? state
-        : {
-              ...state,
-              response: action.payload,
-          };
+    if (cacheScheme === 'cacheOnce') {
+        return {
+            status: 'success',
+            response: action.payload,
+            error: null,
+        };
+    }
 
-const init = <Data = any>(
-    cachedResponse?: ResponseShape<Data>
-): IdleState<Data> => ({
-    status: 'idle',
-    error: null,
-    response: cachedResponse || null,
-});
+    return {
+        ...state,
+        response: action.payload,
+    };
+}
+
+function createInitializer(cacheScheme: CacheScheme) {
+    return function<Data = any>(
+        cachedResponse?: ResponseShape<Data>
+    ): UseRequestState<Data> {
+        if (cacheScheme === 'noCache') {
+            return {
+                status: 'idle',
+                error: null,
+                response: null,
+            };
+        }
+
+        if (cacheScheme === 'cacheOnce' && cachedResponse) {
+            return {
+                status: 'success',
+                error: null,
+                response: cachedResponse,
+            };
+        }
+
+        return {
+            status: 'idle',
+            error: null,
+            response: cachedResponse || null,
+        };
+    };
+}
 
 const actions = {
     requestMade: () => createAction(REQUEST_MADE),

@@ -6,7 +6,7 @@
  *
  * Example:
  *
- * ```ts
+ * ```typescript
  * import React from 'react';
  * import { jasonApiRequest, useRequest } from 'jason-api';
  * import { useDispatch } from 'react-redux';
@@ -85,9 +85,10 @@ export const useRequest = <Data = any>({
 
     const dispatch = useDispatch<JasonApiDispatch>();
 
-    const [state, actions] = useRequestMachine<Data>(
-        cacheScheme === 'noCache' ? undefined : cachedResponse
-    );
+    const [state, actions] = useRequestMachine<Data>({
+        cacheScheme,
+        cachedResponse,
+    });
 
     const haveResponse = !!state.response;
 
@@ -106,12 +107,6 @@ export const useRequest = <Data = any>({
         // We should not initiate a request in an invalid state,
         // or if the cache scheme is `cacheOnly`.
         if (state.status !== 'loading' || cacheScheme === 'cacheOnly') {
-            return;
-        }
-
-        // Do not initiate request if cache scheme is
-        // `cacheOnce`, and we already have a cached response.
-        if (cacheScheme === 'cacheOnce' && haveResponse) {
             return;
         }
 

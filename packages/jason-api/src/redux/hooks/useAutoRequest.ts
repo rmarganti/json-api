@@ -3,7 +3,7 @@
  * --------------------------------
  * Automatically dispatch a JasonAPI Request and return the response.
  *
- * ```ts
+ * ```typescript
  * import React from 'react';
  * import { useAutoResponse } from 'jason-api';
  * import { useDispatch } from 'react-redux';
@@ -44,8 +44,12 @@ export const useAutoRequest = <Data = any>(
 
     // Make the request
     useEffect(() => {
+        if (options.cacheScheme === 'cacheOnce' && request.response) {
+            return;
+        }
+
         fetch();
-    }, deepDependencyCheck([comparableAction]));
+    }, deepDependencyCheck([comparableAction, options.cacheScheme, request.response]));
 
     return [request, fetch];
 };
