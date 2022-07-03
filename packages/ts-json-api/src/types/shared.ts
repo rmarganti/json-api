@@ -25,6 +25,17 @@ export interface PaginationLinks {
  */
 export type TopLevelLinks = Links & PaginationLinks;
 
+
+/**
+ * The top level jsonapi member.
+ * @see https://jsonapi.org/format/#document-jsonapi-object
+ */
+export interface TopLevelJsonApi {
+    version?: string;
+    meta?: Meta;
+}
+
+
 /**
  * A Link.
  */
