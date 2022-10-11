@@ -28,7 +28,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 // External dependencies
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 // Internal dependencies
 import { deepDependencyCheck, toComparableAction } from '../../utils';
@@ -39,17 +39,23 @@ export const useAutoRequest = <Data = any>(
 ): UseRequestResult<Data> => {
     const [request, fetch] = useRequest<Data>(options);
 
+    const responseRef = useRef(request.response);
+
+    useEffect(() => {
+        responseRef.current = request.response;
+    }, [request.response]);
+
     // Used to check if the action has changed and should result in a re-fetch.
     const comparableAction = toComparableAction(options.action);
 
     // Make the request
     useEffect(() => {
-        if (options.cacheScheme === 'cacheOnce' && request.response) {
+        if (options.cacheScheme === 'cacheOnce' && responseRef.current) {
             return;
         }
 
         fetch();
-    }, deepDependencyCheck([comparableAction, options.cacheScheme, request.response]));
+    }, deepDependencyCheck([comparableAction, options.cacheScheme]));
 
     return [request, fetch];
 };
