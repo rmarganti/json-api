@@ -28,7 +28,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 // External dependencies
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 // Internal dependencies
 import { deepDependencyCheck, toComparableAction } from '../../utils';
@@ -39,23 +39,39 @@ export const useAutoRequest = <Data = any>(
 ): UseRequestResult<Data> => {
     const [request, fetch] = useRequest<Data>(options);
 
-    const responseRef = useRef(request.response);
-
-    useEffect(() => {
-        responseRef.current = request.response;
-    }, [request.response]);
-
     // Used to check if the action has changed and should result in a re-fetch.
     const comparableAction = toComparableAction(options.action);
 
-    // Make the request
+    /************************************************
+     *
+     * Handle NON `cacheOnce` schema. It does not
+     * rely on a cached response being present.
+     *
+     ************************************************/
+
     useEffect(() => {
-        if (options.cacheScheme === 'cacheOnce' && responseRef.current) {
+        if (options.cacheScheme === 'cacheOnce') {
             return;
         }
 
         fetch();
     }, deepDependencyCheck([comparableAction, options.cacheScheme]));
+
+    /************************************************
+     *
+     * Handle `cacheOnce` schema. It depends on
+     * whether a cached response is available.
+     *
+     ************************************************/
+
+    const hasResponse = !!request.response;
+    useEffect(() => {
+        if (options.cacheScheme !== 'cacheOnce' || hasResponse) {
+            return;
+        }
+
+        fetch();
+    }, deepDependencyCheck([comparableAction, hasResponse, options.cacheScheme]));
 
     return [request, fetch];
 };
