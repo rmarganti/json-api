@@ -44,7 +44,7 @@ export const useAutoRequest = <Data = any>(
 
     /************************************************
      *
-     * Handle NON `cacheFirst` schema. It does not
+     * Handle NON `cacheOnce` schema. It does not
      * rely on a cached response being present.
      *
      ************************************************/
