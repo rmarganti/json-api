@@ -59,7 +59,7 @@ export const useAutoRequest = <Data = any>(
 
     /************************************************
      *
-     * Handle `cacheFirst` schema. It depends on the
+     * Handle `cacheOnce` schema. It depends on the
      * present on whether a cached response is available,
      * and is handled differently.
      *
