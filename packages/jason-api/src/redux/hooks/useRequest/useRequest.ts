@@ -52,6 +52,7 @@ import { JasonApiRequestAction, JASON_API } from '../../actions';
 import { getCachedQuery } from '../../selectors';
 import { useRequestMachine } from './useRequestMachine';
 import { UseRequestState } from './types';
+import { JSONAPIError } from 'src/JSONAPIError';
 
 // We assume `deps` will be a static array and don't want
 // to use `request` as a dependency, since it is an object.
@@ -131,16 +132,16 @@ export const useRequest = <Data = any>({
                     return;
                 }
 
-                // The middleware always throws errors
+                // The middleware always throws JSONAPIError
                 // as a valid JsonAPI error response.
-                const errorResponse = e as ResponseWithErrors;
+                const jsonApiErr = e as JSONAPIError;
 
                 // Store error response.
-                actions.requestError(errorResponse);
+                actions.requestError(jsonApiErr.response);
 
                 // Trigger optional error callback.
                 if (onError) {
-                    onError(errorResponse);
+                    onError(jsonApiErr.response);
                 }
             });
 
