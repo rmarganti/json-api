@@ -3,10 +3,10 @@ import { Links, Meta } from './shared';
 /**
  * A representation of a single resource.
  */
-export interface ResourceObject {
+export interface ResourceObject<A extends Attributes = Attributes> {
     type: string;
     id: string;
-    attributes?: Attributes;
+    attributes?: A;
     relationships?: Relationships;
     links?: Links;
     meta?: Meta;
@@ -35,10 +35,10 @@ export type ResourceIdentifier<
  * on the server. The main difference between a regular
  * Resource Object is that this may not have an `id` yet.
  */
-export interface NewResourceObject {
+export interface NewResourceObject<A extends Attributes = Attributes> {
     type: string;
     id?: string;
-    attributes?: Attributes;
+    attributes?: A;
     relationships?: Relationships;
     links?: Links;
 }
