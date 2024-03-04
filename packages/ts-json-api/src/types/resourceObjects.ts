@@ -67,10 +67,10 @@ export interface Relationship<
         | ResourceObject[]
 > {
     data?: D extends ResourceObject
-        ? ResourceIdentifier<D>
+        ? ResourceIdentifier<D> | null
         : D extends ResourceObject[]
         ? ResourceIdentifier<D[0]>[]
-        : ResourceIdentifier | ResourceIdentifier[];
+        : ResourceIdentifier | ResourceIdentifier[] | null;
     links?: Links;
     meta?: Meta;
 }
